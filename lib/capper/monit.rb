@@ -7,11 +7,14 @@ Capper.load do
     desc "Setup monit configuration files"
     task :setup do
       configs = fetch(:monit_configs, {})
+      servers = find_servers
 
       upload_template(monitrc, :mode => "0644") do |server|
         configs.keys.select do |name|
-          options = configs[name][:options]
-          find_servers(options).include?(server)
+          roles = [configs[name][:options][:roles]].flatten
+          roles.select do |r|
+            self.roles[r.to_sym].include?(server)
+          end.any?
         end.map do |name|
           "# #{name}\n#{configs[name][:body]}"
         end.join("\n\n")
