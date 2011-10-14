@@ -22,11 +22,14 @@ timeout <%= unicorn_timeout %>
 # know what you are doing.
 pid "<%= shared_path %>/pids/unicorn.pid"
 
-# By default, the Unicorn logger will write to stderr.
-# Additionally, some applications/frameworks log to stderr or stdout,
-# so prevent them from going to /dev/null when daemonized here:
-stderr_path "<%= shared_path %>/log/unicorn.stderr.log"
-stdout_path "<%= shared_path %>/log/unicorn.stdout.log"
+# try using Syslogger and fall back to file-based logging
+begin
+  require "syslogger"
+  logger Syslogger.new("<%= application %>-unicorn", Syslog::LOG_PID, Syslog::LOG_LOCAL1)
+rescue
+  stderr_path "<%= shared_path %>/log/unicorn.stderr.log"
+  stdout_path "<%= shared_path %>/log/unicorn.stdout.log"
+end
 
 # combine REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
