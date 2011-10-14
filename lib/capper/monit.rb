@@ -11,10 +11,14 @@ Capper.load do
 
       upload_template(monitrc, :mode => "0644") do |server|
         configs.keys.select do |name|
-          roles = [configs[name][:options][:roles]].flatten
-          roles.select do |r|
-            self.roles[r.to_sym].include?(server)
-          end.any?
+          roles = configs[name][:options][:roles]
+          if roles.nil?
+            true
+          else
+            [roles].flatten.select do |r|
+              self.roles[r.to_sym].include?(server)
+            end.any?
+          end
         end.map do |name|
           "# #{name}\n#{configs[name][:body]}"
         end.join("\n\n")
