@@ -16,7 +16,7 @@ Capper.load do
   set(:unicorn_config) { File.join(config_path, "unicorn.rb") }
   set(:unicorn_pidfile) { File.join(pid_path, "unicorn.pid") }
 
-  monit_config "unicorn", <<EOF
+  monit_config "unicorn", <<EOF, :roles => :app
 check process unicorn
   with pidfile "<%= unicorn_pidfile %>"
   start program = "<%= unicorn_script %> start" with timeout 60 seconds
