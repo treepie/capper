@@ -1,20 +1,15 @@
-require File.dirname(__FILE__) + '/base' unless defined?(Capper)
+load 'capper/rvm'
+load 'capper/bundler'
 
-# rails uses rvm and bundler
-require 'capper/rvm'
-require 'capper/bundler'
+_cset(:rails_env, "production")
 
-Capper.load do
-  _cset(:rails_env, "production")
+after "deploy:update_code", "rails:setup"
 
-  namespace :rails do
-    desc "Generate rails configuration and helpers"
-    task :setup, :roles => :app, :except => { :no_release => true } do
-      upload_template_file("rails.console.sh",
-                           File.join(bin_path, "con"),
-                           :mode => "0755")
-    end
+namespace :rails do
+  desc "Generate rails configuration and helpers"
+  task :setup, :roles => :app, :except => { :no_release => true } do
+    upload_template_file("rails.console.sh",
+                         File.join(bin_path, "con"),
+                         :mode => "0755")
   end
-
-  after "deploy:update_code", "rails:setup"
 end
