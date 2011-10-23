@@ -1,11 +1,14 @@
 #!/bin/bash
 export HOME=<%= deploy_to %>
-source <%= deploy_to %>/.rvm/scripts/rvm
 export RAILS_ENV=<%= rails_env %>
+
+if [[ -e "${HOME}"/.rvm/scripts/rvm ]]; then
+  source "${HOME}"/.rvm/scripts/rvm
+fi
 
 PIDFILE=<%= shared_path %>/pids/unicorn.pid
 CONFIG=<%= shared_path %>/config/unicorn.rb
-CMD="bundle exec unicorn -c $CONFIG -E $RAILS_ENV -D config.ru"
+CMD="<%= ruby_exec_prefix %> unicorn -c $CONFIG -E $RAILS_ENV -D config.ru"
 
 cd <%= current_path %> >/dev/null
 

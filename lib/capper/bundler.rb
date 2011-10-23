@@ -1,7 +1,7 @@
 require 'bundler/capistrano'
 
-# always execute rake with bundler to make sure we use the right version
-set(:rake, "bundle exec rake")
+# use bundle exec for all ruby programs
+set(:ruby_exec_prefix, "bundle exec")
 
 # do not install a global bundle if rvm has been enabled
 # instead, use the gemset selected by rvm_ruby_string

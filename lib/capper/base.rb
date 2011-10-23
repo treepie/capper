@@ -41,6 +41,7 @@ _cset(:default_environment, { 'LANG' => 'en_US.UTF-8' })
 # set a global (empty) prefix for ruby applications so that
 # other recipes (bundler) can override it (with bundle exec)
 _cset(:ruby_exec_prefix, "")
+set(:rake) { "#{ruby_exec_prefix} rake" }
 
 # cleanup by default
 after "deploy:update", "deploy:cleanup"

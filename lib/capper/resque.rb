@@ -1,6 +1,3 @@
-load 'capper/bundler'
-load 'capper/monit'
-
 # configuration variables
 _cset(:resque_workers, {})
 

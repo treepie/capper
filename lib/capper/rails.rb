@@ -1,6 +1,3 @@
-load 'capper/rvm'
-load 'capper/bundler'
-
 _cset(:rails_env, "production")
 
 after "deploy:update_code", "rails:setup"

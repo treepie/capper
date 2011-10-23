@@ -1,5 +1,3 @@
-load 'capper/bundler'
-
 # unicorn configuration variables
 _cset(:unicorn_worker_processes, 4)
 _cset(:unicorn_timeout, 30)

@@ -10,7 +10,7 @@ WORKER="$1" && shift
 QUEUE="$1" && shift
 
 PIDFILE=<%= pid_path %>/resque.${WORKER}.pid
-CMD="bundle exec rake environment resque:work QUEUE=${QUEUE} PIDFILE=${PIDFILE}"
+CMD="<%= rake %> environment resque:work QUEUE=${QUEUE} PIDFILE=${PIDFILE}"
 
 cd <%= current_path %> >/dev/null
 

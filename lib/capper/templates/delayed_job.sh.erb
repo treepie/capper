@@ -19,4 +19,4 @@ if [[ $# -ge 1 ]]; then
   MAX="--max-priority $1" && shift
 fi
 
-exec bundle exec ./script/delayed_job $CMD --prefix <%= application %> --identifier $ID --pid-dir=<%= pid_path %> $MIN $MAX
+exec <%= ruby_exec_prefix %> ./script/delayed_job $CMD --prefix <%= application %> --identifier $ID --pid-dir=<%= pid_path %> $MIN $MAX

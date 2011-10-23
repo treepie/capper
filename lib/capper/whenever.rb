@@ -1,6 +1,4 @@
-load 'capper/bundler'
-
-set(:whenever_command) { "bundle exec whenever" }
+set(:whenever_command) { "#{ruby_exec_prefix} whenever" }
 set(:whenever_identifier) { application }
 set(:whenever_environment) { fetch(:rails_env, "production") }
 set(:whenever_update_flags) { "--update-crontab #{whenever_identifier} --set environment=#{whenever_environment}" }
@@ -11,18 +9,7 @@ after "deploy:symlink", "whenever:update_crontab"
 after "deploy:rollback", "whenever:update_crontab"
 
 namespace :whenever do
-  desc <<-DESC
-    Update application's crontab entries using Whenever. You can configure \
-    the command used to invoke Whenever by setting the :whenever_command \
-    variable, which can be used with Bundler to set the command to \
-    "bundle exec whenever". You can configure the identifier used by setting \
-    the :whenever_identifier variable, which defaults to the same value configured \
-    for the :application variable. You can configure the environment by setting \
-    the :whenever_environment variable, which defaults to the same value \
-    configured for the :rails_env variable which itself defaults to "production". \
-    Finally, you can completely override all arguments to the Whenever command \
-    by setting the :whenever_update_flags variable.
-  DESC
+  desc "Update application's crontab entries"
   task :update_crontab do
     on_rollback do
       if previous_release
@@ -35,6 +22,7 @@ namespace :whenever do
     run "cd #{current_path} && #{whenever_command} #{whenever_update_flags}"
   end
 
+  desc "Remove all entries from application's crontab"
   task :clear_crontab do
     run "crontab /dev/null"
   end

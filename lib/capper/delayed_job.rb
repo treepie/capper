@@ -1,4 +1,3 @@
-load 'capper/bundler'
 load 'capper/monit'
 
 # configuration variables
