@@ -2,14 +2,14 @@
 
 Gem::Specification.new do |s|
   s.name = "capper"
-  s.version = "0.7.3"
+  s.version = "0.8.0"
   s.platform = Gem::Platform::RUBY
   s.licenses = ["MIT"]
   s.authors = ["Benedikt Böhm"]
   s.email = ["bb@xnull.de"]
-  s.homepage = "http://github.com/hollow/capper"
-  s.summary = %q{Capistrano is a collection of opinionated Capistrano recipes}
-  s.description = %q{Capistrano is a collection of opinionated Capistrano recipes}
+  s.homepage = "http://github.com/zenops/capper"
+  s.summary = %q{Capper is a collection of opinionated Capistrano recipes}
+  s.description = %q{Capper is a collection of opinionated Capistrano recipes}
 
   s.add_dependency "erubis"
   s.add_dependency "capistrano"
