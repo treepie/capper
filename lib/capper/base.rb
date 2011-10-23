@@ -3,6 +3,7 @@ require 'capistrano_colors/configuration'
 require 'capistrano_colors/logger'
 
 colorize([
+  { :match => /executing `multistage.*/,   :color => :hide,    :level => 2, :prio => 0 },
   { :match => /executing `.*/,             :color => :yellow,  :level => 2, :prio => -10, :attribute => :bright, :prepend => "== Currently " },
   { :match => /executing ".*/,             :color => :magenta, :level => 2, :prio => -20 },
   { :match => /sftp upload complete/,      :color => :hide,    :level => 2, :prio => -20 },
