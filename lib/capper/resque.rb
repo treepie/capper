@@ -33,6 +33,8 @@ namespace :resque do
 
   desc "Restart resque workers"
   task :restart, :roles => :worker, :except => { :no_release => true } do
-    run "monit -g resque restart all"
+    if fetch(:monitrc, false)
+      run "monit -g resque restart all"
+    end
   end
 end

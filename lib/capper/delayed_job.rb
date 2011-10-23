@@ -1,5 +1,3 @@
-load 'capper/monit'
-
 # configuration variables
 _cset(:delayed_job_workers, {})
 
@@ -35,6 +33,8 @@ namespace :delayed_job do
 
   desc "Restart DelayedJob workers"
   task :restart, :roles => :worker, :except => { :no_release => true } do
-    run "monit -g delayed_job restart all"
+    if fetch(:monitrc, false)
+      run "monit -g delayed_job restart all"
+    fi
   end
 end
