@@ -1,6 +1,6 @@
 require "erubis"
 
-class Capper
+module Capper
   module Utils
     module Templates
 

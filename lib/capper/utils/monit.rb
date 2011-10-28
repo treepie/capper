@@ -1,4 +1,4 @@
-class Capper
+module Capper
   module Utils
     module Monit
 

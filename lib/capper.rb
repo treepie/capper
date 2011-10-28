@@ -1,3 +1,5 @@
+require "capper/version"
+
 # mixin various helpers
 require 'capper/utils/templates'
 include Capper::Utils::Templates
