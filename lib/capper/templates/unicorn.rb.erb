@@ -22,14 +22,16 @@ timeout <%= unicorn_timeout %>
 # know what you are doing.
 pid "<%= shared_path %>/pids/unicorn.pid"
 
-# try using Syslogger and fall back to file-based logging
+# use syslogger if available
 begin
   require "syslogger"
   logger Syslogger.new("<%= application %>-unicorn", Syslog::LOG_PID, Syslog::LOG_LOCAL1)
 rescue
-  stderr_path "<%= shared_path %>/log/unicorn.stderr.log"
-  stdout_path "<%= shared_path %>/log/unicorn.stdout.log"
 end
+
+# these do not seem to support syslog
+stderr_path "<%= shared_path %>/log/unicorn.stderr.log"
+stdout_path "<%= shared_path %>/log/unicorn.stdout.log"
 
 # combine REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
