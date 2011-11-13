@@ -1,3 +1,5 @@
+load 'capper/ruby'
+
 require 'bundler/capistrano'
 
 # use bundle exec for all ruby programs

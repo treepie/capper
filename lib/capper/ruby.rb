@@ -1,3 +1,6 @@
+_cset(:ruby_exec_prefix, "")
+_cset(:rake) { "#{ruby_exec_prefix} rake" }
+
 before "deploy:setup", "gemrc:setup"
 
 namespace :gemrc do

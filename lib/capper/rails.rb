@@ -1,3 +1,5 @@
+load "capper/ruby"
+
 _cset(:rails_env, "production")
 
 _cset(:asset_pipeline, true)

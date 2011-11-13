@@ -1,6 +1,8 @@
+load "capper/ruby"
+
 set(:whenever_command) { "#{ruby_exec_prefix} whenever" }
 set(:whenever_identifier) { application }
-set(:whenever_environment) { fetch(:rails_env, "production") }
+set(:whenever_environment) { rails_env }
 set(:whenever_update_flags) { "--update-crontab #{whenever_identifier} --set environment=#{whenever_environment}" }
 set(:whenever_clear_flags) { "--clear-crontab #{whenever_identifier}" }
 
