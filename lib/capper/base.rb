@@ -108,16 +108,6 @@ logger.level = Capistrano::Logger::DEBUG
 # These are helper methods that will be available to your recipes.
 # =========================================================================
 
-# Auxiliary helper method for the `deploy:check' task. Lets you set up your
-# own dependencies.
-def depend(location, type, *args)
-  deps = fetch(:dependencies, {})
-  deps[location] ||= {}
-  deps[location][type] ||= []
-  deps[location][type] << args
-  set :dependencies, deps
-end
-
 # Temporarily sets an environment variable, yields to a block, and restores
 # the value when it is done.
 def with_env(name, value)
@@ -215,37 +205,17 @@ namespace :deploy do
 
   desc <<-DESC
     [internal] Touches up the released code. This is called by update_code \
-    after the basic deploy finishes. It assumes a Rails project was deployed, \
-    so if you are deploying something else, you may want to override this \
-    task with your own environment's requirements.
+    after the basic deploy finishes.
 
     This task will set up symlinks to the shared directory for the log, system, \
-    and tmp/pids directories as well as mappings specified in :symlinks, and \
-    will lastly touch all assets in public/images, public/stylesheets, and \
-    public/javascripts so that the times are consistent (so that asset \
-    timestamping works).  This touch process is only carried out if the \
-    :normalize_asset_timestamps variable is set to true, which is the default. \
-    The asset directories can be overridden using the :public_children \
-    variable.
+    and tmp/pids directories as well as mappings specified in :symlinks.
   DESC
   task :finalize_update, :except => { :no_release => true } do
-    symlinks = fetch(:symlinks, {}).merge({
-      "log" => "log",
-      "system" => "public/system",
-      "pids" => "tmp/pids"
-    })
-
-    run(symlinks.map do |source, dest|
+    run(fetch(:symlinks, {}).map do |source, dest|
       "rm -rf #{latest_release}/#{dest} && " +
       "mkdir -p #{File.dirname(File.join(latest_release, dest))} && " +
       "ln -s #{shared_path}/#{source} #{latest_release}/#{dest}"
     end.join(" && "))
-
-    if fetch(:normalize_asset_timestamps, true)
-      stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
-      asset_paths = fetch(:public_children, %w(images stylesheets javascripts)).map { |p| "#{latest_release}/public/#{p}" }.join(" ")
-      run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
-    end
   end
 
   desc <<-DESC
@@ -270,28 +240,19 @@ namespace :deploy do
   end
 
   desc <<-DESC
-    Copy files to the currently deployed version. This is useful for updating \
-    files piecemeal, such as when you need to quickly deploy only a single \
-    file. Some files, such as updated templates, images, or stylesheets, \
-    might not require a full deploy, and especially in emergency situations \
-    it can be handy to just push the updates to production, quickly.
-
-    To use this task, specify the files and directories you want to copy as a \
-    comma-delimited list in the FILES environment variable. All directories \
-    will be processed recursively, with all files being pushed to the \
-    deployment servers.
-
-      $ cap deploy:upload FILES=templates,controller.rb
-
-    Dir globs are also supported:
-
-      $ cap deploy:upload FILES='config/apache/*.conf'
+    Blank task exists as a hook into which to install your own environment \
+    specific behaviour.
   DESC
-  task :upload, :except => { :no_release => true } do
-    files = (ENV["FILES"] || "").split(",").map { |f| Dir[f.strip] }.flatten
-    abort "Please specify at least one file or directory to update (via the FILES environment variable)" if files.empty?
+  task :start, :roles => :app do
+    # Empty Task to overload with your platform specifics
+  end
 
-    files.each { |file| top.upload(file, File.join(current_path, file)) }
+  desc <<-DESC
+    Blank task exists as a hook into which to install your own environment \
+    specific behaviour.
+  DESC
+  task :stop, :roles => :app do
+    # Empty Task to overload with your platform specifics
   end
 
   desc <<-DESC
@@ -300,6 +261,41 @@ namespace :deploy do
   DESC
   task :restart, :roles => :app, :except => { :no_release => true } do
     # Empty Task to overload with your platform specifics
+  end
+
+  desc <<-DESC
+    Blank task exists as a hook into which to install your own environment \
+    specific behaviour.
+  DESC
+  task :migrate, :roles => :db, :only => { :primary => true } do
+    # Empty Task to overload with your platform specifics
+  end
+
+  desc <<-DESC
+    Deploy and run pending migrations. This will work similarly to the \
+    `deploy' task, but will also run any pending migrations (via the \
+    `deploy:migrate' task) prior to updating the symlink. Note that the \
+    update in this case is not atomic, and transactions are not used, \
+    because migrations are not guaranteed to be reversible.
+  DESC
+  task :migrations do
+    update_code
+    migrate
+    symlink
+    restart
+  end
+
+  desc <<-DESC
+    Deploys and starts a `cold' application. This is useful if you have not \
+    deployed your application before, or if your application is (for some \
+    other reason) not currently running. It will deploy the code, run any \
+    pending migrations, and then instead of invoking `deploy:restart', it will \
+    invoke `deploy:start' to fire up the application servers.
+  DESC
+  task :cold do
+    update
+    migrate
+    start
   end
 
   namespace :rollback do
@@ -349,49 +345,6 @@ namespace :deploy do
   end
 
   desc <<-DESC
-    Run the migrate rake task. By default, it runs this in most recently \
-    deployed version of the app. However, you can specify a different release \
-    via the migrate_target variable, which must be one of :latest (for the \
-    default behavior), or :current (for the release indicated by the \
-    `current' symlink). Strings will work for those values instead of symbols, \
-    too. You can also specify additional environment variables to pass to rake \
-    via the migrate_env variable. Finally, you can specify the full path to the \
-    rake executable by setting the rake variable. The defaults are:
-
-      set :rake,           "rake"
-      set :rails_env,      "production"
-      set :migrate_env,    ""
-      set :migrate_target, :latest
-  DESC
-  task :migrate, :roles => :db, :only => { :primary => true } do
-    migrate_env = fetch(:migrate_env, "")
-    migrate_target = fetch(:migrate_target, :latest)
-
-    directory = case migrate_target.to_sym
-      when :current then current_path
-      when :latest  then latest_release
-      else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
-      end
-
-    run "cd #{directory} && #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:migrate"
-  end
-
-  desc <<-DESC
-    Deploy and run pending migrations. This will work similarly to the \
-    `deploy' task, but will also run any pending migrations (via the \
-    `deploy:migrate' task) prior to updating the symlink. Note that the \
-    update in this case it is not atomic, and transactions are not used, \
-    because migrations are not guaranteed to be reversible.
-  DESC
-  task :migrations do
-    set :migrate_target, :latest
-    update_code
-    migrate
-    symlink
-    restart
-  end
-
-  desc <<-DESC
     Clean up old releases. By default, the last 5 releases are kept on each \
     server (though you can change this with the keep_releases variable). All \
     other deployed revisions are removed from the servers.
@@ -408,69 +361,6 @@ namespace :deploy do
 
       run "rm -rf #{directories}"
     end
-  end
-
-  desc <<-DESC
-    Test deployment dependencies. Checks things like directory permissions, \
-    necessary utilities, and so forth, reporting on the things that appear to \
-    be incorrect or missing. This is good for making sure a deploy has a \
-    chance of working before you actually run `cap deploy'.
-
-    You can define your own dependencies, as well, using the `depend' method:
-
-      depend :local, :command, "svn"
-      depend :remote, :directory, "/u/depot/files"
-  DESC
-  task :check, :except => { :no_release => true } do
-    dependencies = strategy.check!
-
-    other = fetch(:dependencies, {})
-    other.each do |location, types|
-      types.each do |type, calls|
-        calls.each do |args|
-          dependencies.send(location).send(type, *args)
-        end
-      end
-    end
-
-    if dependencies.pass?
-      puts "You appear to have all necessary dependencies installed"
-    else
-      puts "The following dependencies failed. Please check them and try again:"
-      dependencies.reject { |d| d.pass? }.each do |d|
-        puts "--> #{d.message}"
-      end
-      abort
-    end
-  end
-
-  desc <<-DESC
-    Deploys and starts a `cold' application. This is useful if you have not \
-    deployed your application before, or if your application is (for some \
-    other reason) not currently running. It will deploy the code, run any \
-    pending migrations, and then instead of invoking `deploy:restart', it will \
-    invoke `deploy:start' to fire up the application servers.
-  DESC
-  task :cold do
-    update
-    migrate
-    start
-  end
-
-  desc <<-DESC
-    Blank task exists as a hook into which to install your own environment \
-    specific behaviour.
-  DESC
-  task :start, :roles => :app do
-    # Empty Task to overload with your platform specifics
-  end
-
-  desc <<-DESC
-    Blank task exists as a hook into which to install your own environment \
-    specific behaviour.
-  DESC
-  task :stop, :roles => :app do
-    # Empty Task to overload with your platform specifics
   end
 
   namespace :pending do
