@@ -1,0 +1,33 @@
+#!/bin/bash
+export HOME=<%= deploy_to %>
+
+PIDFILE=<%= uwsgi_pidfile %>
+CONFIG=<%= uwsgi_config %>
+LOGFILE=<%= log_path %>/uwsgi.log
+CMD="uwsgi -x $CONFIG -d $LOGFILE"
+
+cd <%= current_path %> >/dev/null
+
+sig () {
+  test -s "$PIDFILE" && kill -$1 $(<$PIDFILE)
+}
+
+case $1 in
+start)
+  sig 0 && echo >&2 "Already running" && exit 0
+  $CMD
+  ;;
+stop)
+  sig QUIT && exit 0
+  echo >&2 "Not running"
+  ;;
+reload)
+  sig HUP && echo reloaded OK && exit 0
+  echo >&2 "Couldn't reload, starting '$CMD' instead"
+  $CMD
+  ;;
+*)
+  echo >&2 "Usage: $0 <start|stop|reload>"
+  exit 1
+  ;;
+esac

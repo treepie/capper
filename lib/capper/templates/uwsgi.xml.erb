@@ -1,0 +1,10 @@
+<uwsgi>
+  <master/>
+  <processes><%= uwsgi_worker_processes %></processes>
+  <home><%= deploy_to %></home>
+  <socket><%= pid_path %>/uwsgi.sock</socket>
+  <pidfile><%= uwsgi_pidfile %></pidfile>
+  <pythonpath><%= current_path %></pythonpath>
+  <env>DJANGO_SETTINGS_MODULE=<%= application %>.settings</env>
+  <module>django.core.handlers.wsgi:WSGIHandler()</module>
+</uwsgi>
