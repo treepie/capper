@@ -60,6 +60,7 @@ _cset(:release_path)      { File.join(releases_path, release_name) }
 
 _cset(:bin_path)          { File.join(deploy_to, "bin") }
 _cset(:pid_path)          { File.join(shared_path, "pids") }
+_cset(:log_path)          { File.join(shared_path, "log") }
 _cset(:config_path)       { File.join(shared_path, "config") }
 
 _cset(:releases)          { capture("ls -x #{releases_path}", :except => { :no_release => true }).split.sort }
@@ -70,7 +71,7 @@ _cset(:current_revision)  { capture("cat #{current_path}/REVISION",     :except 
 _cset(:latest_revision)   { capture("cat #{current_release}/REVISION",  :except => { :no_release => true }).chomp }
 _cset(:previous_revision) { capture("cat #{previous_release}/REVISION", :except => { :no_release => true }).chomp if previous_release }
 
-set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(system logs pids))
+set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(system log pids))
 
 # some tasks, like symlink, need to always point at the latest release, but
 # they can also (occassionally) be called standalone. In the standalone case,

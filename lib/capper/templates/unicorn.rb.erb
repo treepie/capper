@@ -13,14 +13,14 @@ worker_processes <%= unicorn_worker_processes %>
 working_directory "<%= current_path %>"
 
 # listen on Unix domain socket and let nginx proxy
-listen "<%= shared_path %>/pids/unicorn.sock"
+listen "<%= pid_path %>/unicorn.sock"
 
 # nuke workers after 30 seconds instead of 60 seconds (the default)
 timeout <%= unicorn_timeout %>
 
 # Location of the pidfile. Should not be changed unless you
 # know what you are doing.
-pid "<%= shared_path %>/pids/unicorn.pid"
+pid "<%= unicorn_pidfile %>"
 
 # use syslogger if available
 begin
@@ -30,8 +30,8 @@ rescue
 end
 
 # these do not seem to support syslog
-stderr_path "<%= shared_path %>/log/unicorn.stderr.log"
-stdout_path "<%= shared_path %>/log/unicorn.stdout.log"
+stderr_path "<%= log_path %>/unicorn.stderr.log"
+stdout_path "<%= log_path %>/unicorn.stdout.log"
 
 # combine REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
@@ -66,7 +66,7 @@ before_fork do |server, worker|
   # thundering herd (especially in the "preload_app false" case)
   # when doing a transparent upgrade.  The last worker spawned
   # will then kill off the old master process with a SIGQUIT.
-  old_pid = "<%= shared_path %>/pids/unicorn.pid.oldbin"
+  old_pid = "<%= unicorn_pidfile %>.oldbin"
   if old_pid != server.pid
     begin
       sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
