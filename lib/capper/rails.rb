@@ -4,20 +4,15 @@ _cset(:rails_env, "production")
 
 _cset(:asset_pipeline, true)
 _cset(:asset_env, "RAILS_GROUPS=assets")
-_cset(:assets_prefix, "assets")
 
-set(:shared_children) do
-  fetch(:shared_children, []) | %w(assets)
-end
+set(:shared_children, fetch(:shared_children, []) | %w(assets))
 
-set(:symlinks) do
-  fetch(:symlinks, {}).merge({
-    "assets" => "public/#{assets_prefix}",
-    "log" => "log",
-    "pids" => "tmp/pids",
-    "system" => "public/system",
-  })
-end
+set(:symlinks, fetch(:symlinks, {}).merge({
+  "assets" => "public/assets",
+  "log" => "log",
+  "pids" => "tmp/pids",
+  "system" => "public/system",
+}))
 
 after 'deploy:update_code', 'rails:setup'
 after 'deploy:update_code', 'rails:assets:precompile'
