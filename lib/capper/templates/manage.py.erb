@@ -3,4 +3,4 @@ export HOME=<%= deploy_to %>
 
 cd <%= current_path %> >/dev/null
 
-exec <%= bin_path %> manage.py "$@"
+exec <%= python %> manage.py "$@"
