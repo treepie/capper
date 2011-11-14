@@ -70,6 +70,8 @@ _cset(:current_revision)  { capture("cat #{current_path}/REVISION",     :except 
 _cset(:latest_revision)   { capture("cat #{current_release}/REVISION",  :except => { :no_release => true }).chomp }
 _cset(:previous_revision) { capture("cat #{previous_release}/REVISION", :except => { :no_release => true }).chomp if previous_release }
 
+set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(system logs pids))
+
 # some tasks, like symlink, need to always point at the latest release, but
 # they can also (occassionally) be called standalone. In the standalone case,
 # the timestamped release_path will be inaccurate, since the directory won't
@@ -166,7 +168,7 @@ namespace :deploy do
     will not destroy any deployed revisions or data.
   DESC
   task :setup, :except => { :no_release => true } do
-    shared = %w(system log pids) | fetch(:shared_children, [])
+    shared = fetch(:internal_shared_children, []) | fetch(:shared_children, [])
     dirs = [deploy_to, releases_path, shared_path]
     dirs += shared.map { |d| File.join(shared_path, d) }
     run "mkdir -p #{dirs.join(' ')}"
@@ -213,7 +215,7 @@ namespace :deploy do
     and tmp/pids directories as well as mappings specified in :symlinks.
   DESC
   task :finalize_update, :except => { :no_release => true } do
-    run(fetch(:symlinks, {}).map do |source, dest|
+    run(fetch(:internal_symlinks, {}).merge(fetch(:symlinks, {})).map do |source, dest|
       "rm -rf #{latest_release}/#{dest} && " +
       "mkdir -p #{File.dirname(File.join(latest_release, dest))} && " +
       "ln -s #{shared_path}/#{source} #{latest_release}/#{dest}"
