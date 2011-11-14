@@ -7,9 +7,9 @@ before 'deploy:migrate', 'django:migrate'
 namespace :django do
   desc "Generate rails configuration and helpers"
   task :setup, :roles => :app, :except => { :no_release => true } do
-    #upload_template_file("rails.console.sh",
-    #                     File.join(bin_path, "con"),
-    #                     :mode => "0755")
+    upload_template_file("manage.py.sh",
+                         File.join(bin_path, "manage.py"),
+                         :mode => "0755")
   end
 
   desc <<-DESC

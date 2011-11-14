@@ -1,0 +1,6 @@
+#!/bin/bash
+export HOME=<%= deploy_to %>
+
+cd <%= current_path %> >/dev/null
+
+exec <%= bin_path %> manage.py "$@"
