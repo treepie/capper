@@ -6,15 +6,20 @@ _cset(:asset_pipeline, true)
 _cset(:asset_env, "RAILS_GROUPS=assets")
 _cset(:assets_prefix, "assets")
 
-set(:symlinks, fetch(:symlinks, {}).merge({
-  "log" => "log",
-  "system" => "public/system",
-  "pids" => "tmp/pids"
-}))
+set(:shared_children) do
+  fetch(:shared_children, []) | %w(assets)
+end
+
+set(:symlinks) do
+  fetch(:symlinks, {}).merge({
+    "assets" => "public/#{assets_prefix}",
+    "log" => "log",
+    "pids" => "tmp/pids",
+    "system" => "public/system",
+  })
+end
 
 after 'deploy:update_code', 'rails:setup'
-
-before 'deploy:finalize_update', 'rails:assets:symlink'
 after 'deploy:update_code', 'rails:assets:precompile'
 
 before 'deploy:migrate', 'rails:migrate'
@@ -56,25 +61,6 @@ namespace :rails do
   end
 
   namespace :assets do
-    desc <<-DESC
-      [internal] This task will set up a symlink to the shared directory \
-      for the assets directory. Assets are shared across deploys to avoid \
-      mid-deploy mismatches between old application html asking for assets \
-      and getting a 404 file not found error. The assets cache is shared \
-      for efficiency. If you cutomize the assets path prefix, override the \
-      :assets_prefix variable to match.
-    DESC
-    task :symlink, :roles => [:web, :asset], :except => { :no_release => true } do
-      if asset_pipeline
-        run <<-CMD
-          rm -rf #{latest_release}/public/#{assets_prefix} &&
-          mkdir -p #{latest_release}/public &&
-          mkdir -p #{shared_path}/assets &&
-          ln -s #{shared_path}/assets #{latest_release}/public/#{assets_prefix}
-        CMD
-      end
-    end
-
     desc <<-DESC
       Run the asset precompilation rake task. You can specify the full path \
       to the rake executable by setting the rake variable. You can also \
