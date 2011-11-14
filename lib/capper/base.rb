@@ -81,7 +81,7 @@ _cset(:latest_release) { exists?(:deploy_timestamped) ? release_path : current_r
 # bundler. see https://github.com/capistrano/capistrano/issues/70
 set(:default_environment, fetch(:default_environment).merge({
   'LANG' => 'en_US.UTF-8'
-})
+}))
 
 # add some colors and hide certain messages
 require 'capistrano_colors/configuration'
