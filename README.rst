@@ -11,12 +11,12 @@ Capper is a collection of opinionated Capistrano recipes.
 Rationale
 =========
 
-Most Ruby (on Rails) applications are deployed the same way. While capistrano
-itself is already quite opinionated, maintaining a multitude of applications
-feels like copy&paste very fast.
+Most web applications are deployed the same way. While capistrano itself is
+already quite opinionated, maintaining a multitude of applications feels like
+copy&paste very fast.
 
 Capper provides sane defaults and many recipes for technologies typically used
-with Ruby (on Rails) deployments to make ``config/deploy.rb`` much more
+with Ruby and Python deployments to make ``config/deploy.rb`` much more
 declarative and terse.
 
 Usage
@@ -34,8 +34,8 @@ Capper recipes should be loaded via ``Capfile`` like this::
 
   load "capper/multistage"
 
-Note: capper takes care of loading capistranos default deploy recipe, no need
-to load it again in your ``Capfile``.
+Note: capper does not support capistranos default deploy recipe, instead an
+enhanced copy is shipped directly with capper and enabled by default.
 
 Multistage
 ----------
@@ -102,8 +102,9 @@ The following recipes are included in capper.
 base
 ----
 
-The base recipe is automatically loaded and provides the basic opinions capper
-has about deployment:
+The base is an enhanced version of capistranos default deploy recipe. It is
+loaded automatically and provides the basic opinions capper has about
+deployment:
 
 - The application is deployed to a dedicated user account with the same name as
   the application.
@@ -114,10 +115,12 @@ has about deployment:
 
 - Releases are cleaned up by default.
 
-Additionally a ``deploy:symlink`` task is provided to make symlinks declarative
-in ``config/deploy.rb``::
+- The application is deployed via ``remote_cache`` and ``git``.
 
-  set :symlink, {
+The ``deploy:finalize_update`` task has been enhanced to make symlinks
+declarative in ``config/deploy.rb``::
+
+  set :symlinks, {
     "config/database.yml" => "config/database.yml",
     "shared/uploads" => "public/uploads"
   }
@@ -142,6 +145,7 @@ The bundler recipe is an extension of bundlers native capistrano integration:
   (``shared/bundle/#{gemset}``).
 
 - The option ``ruby_exec_prefix`` is set to ``bundle exec`` for convenience.
+  (see ``ruby`` recipe for details)
 
 config
 ------
@@ -169,14 +173,10 @@ automatically (re)started during deploy and can be specified via
     :worker2 => 2..10
   }
 
-git
----
+django
+------
 
-The git recipe will simply set capistrano to use the git strategy with
-remote_cache::
-
-  set(:scm, :git)
-  set(:deploy_via, :remote_cache)
+The django recipe provides setup and migrate tasks for Django.
 
 hoptoad
 -------
@@ -197,12 +197,19 @@ The monit recipe will collect all snippets declared via ``monit_config`` and
 render them into the file specified via ``monitrc`` (default:
 ``~/.monitrc.local``, this file should be included in your ``~/.monitrc``).
 
+python
+------
+
+The python recipe provides basic support for Python applications. It will
+create a symlink from ``#{current_path}/#{application}`` to ``#{current_path}``
+for Python namespace support.
+
 rails
 -----
 
 The rails recipe sets the default ``rails_env`` to production and includes
-tasks for deploying the asset pipeline for rails 3.1 applications. The recipe
-will automatically determine if your asset timestamps need to be normalized.
+tasks for deploying the asset pipeline for rails 3.1 applications. It also
+provdes a migrate task for Rails applications.
 
 resque
 ------
@@ -231,16 +238,18 @@ the ruby version and gemset via the projects ``.rvmrc``.
 A ``deploy:setup`` hook is provided to ensure the correct ruby and rubygems
 version is installed on all servers.
 
+ruby
+----
+
+The ruby recipe provides basic support for Ruby applications. It will setup a
+gemrc file and and variables for ``ruby_exec_prefix`` (such as bundler).
+
 unicorn
 -------
 
 The unicorn recipe provides integration with Unicorn. A script to manage the
 unicorn process is uploaded to ``#{bin_path}/unicorn``. Additionally this
 recipe also manages the unicorn configuration file (in ``config/unicorn.rb``).
-
-If monit integration has been enabled via ``capper/monit`` unicorn is
-automatically (re)started during ``deploy:restart`` using unicorns in-place,
-no-downtime upgrade method.
 
 The following configuration options are provided:
 
@@ -249,6 +258,25 @@ The following configuration options are provided:
 
 ``unicorn_timeout``
   Timeout after which workers are killed (default: 30)
+
+uwsgi
+-----
+
+The uwsgi recipe provides integration with uWSGI. A script to manage the uwsgi
+process is uploaded to ``#{bin_path}/uwsgi``. Additionally this recipe also
+manages the uwsgi configuration file (in ``config/uwsgi.xml``).
+
+The following configuration options are provided:
+
+``uwsgi_worker_processes``
+  Number of uwsgi workers (default: 4)
+
+virtualenv
+----------
+
+The virtualenv recipe provides ``deploy:setup`` hooks for virtualenv support.
+In addition required Python libraries are installed via pip into this
+environment.
 
 whenever
 --------
@@ -276,5 +304,5 @@ Contributing to capper
 Copyright
 =========
 
-Copyright (c) 2011 Benedikt Böhm. See LICENSE.txt for
+Copyright (c) 2011 Benedikt Böhm. See LICENSE for
 further details.
