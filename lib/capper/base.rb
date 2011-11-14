@@ -79,7 +79,11 @@ _cset(:latest_release) { exists?(:deploy_timestamped) ? release_path : current_r
 
 # set proper unicode locale, so gemspecs with unicode chars will not crash
 # bundler. see https://github.com/capistrano/capistrano/issues/70
-_cset(:default_environment, { 'LANG' => 'en_US.UTF-8' })
+set(:default_environment) do
+  fetch(:default_environment).merge({
+    'LANG' => 'en_US.UTF-8'
+  })
+end
 
 # add some colors and hide certain messages
 require 'capistrano_colors/configuration'
