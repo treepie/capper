@@ -6,8 +6,6 @@ require 'rvm/capistrano'
 set(:rvm_type, :user)
 set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm use --create (.*)/, '\1').strip)
 
-_cset(:rvm_rubygems_version, "1.6.2")
-
 before "deploy:setup", "rvm:setup"
 after "deploy:symlink", "rvm:trust_rvmrc"
 
@@ -28,8 +26,10 @@ namespace :rvm do
     # this ensures that Gentoos declare -x RUBYOPT="-rauto_gem" is ignored.
     run "touch ~/.rvm/rubies/#{wo_gemset}/lib/ruby/site_ruby/auto_gem.rb"
 
-    # freeze rubygems version
-    run("rvm rubygems #{rvm_rubygems_version}")
+    # if specified freeze rubygems version, otherwise don't touch it
+    if fetch(:rvm_rubygems_version, false)
+      run("rvm rubygems #{rvm_rubygems_version}")
+    end
   end
 
   # prevents interactive rvm dialog
