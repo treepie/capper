@@ -26,8 +26,9 @@ Capper recipes should be loaded via ``Capfile`` like this::
 
   require "capper"
 
-  load "capper/git"
+  load "capper/bundler"
   load "capper/rails"
+  load "capper/rvm"
   load "capper/unicorn"
 
   load "config/deploy"
@@ -102,8 +103,8 @@ The following recipes are included in capper.
 base
 ----
 
-The base is an enhanced version of capistranos default deploy recipe. It is
-loaded automatically and provides the basic opinions capper has about
+The base recipe is an enhanced version of capistranos default deploy recipe. It
+is loaded automatically and provides the basic opinions capper has about
 deployment:
 
 - The application is deployed to a dedicated user account with the same name as
@@ -137,7 +138,7 @@ bundler
 
 The bundler recipe is an extension of bundlers native capistrano integration:
 
-- During ``deploy:setup`` it is ensured that a known-to-work bundler version
+- During ``bundle:install`` it is ensured that a known-to-work bundler version
   (specified via ``bundler_version``) is installed.
 
 - When used together with the rvm recipe bundles are not installed globally to
