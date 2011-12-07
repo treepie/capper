@@ -6,13 +6,30 @@ require 'rvm/capistrano'
 set(:rvm_type, :user)
 set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm use --create (.*)/, '\1').strip)
 
+_cset(:rvm_version, "1.9.2")
+_cset(:rvm_installer_url, "https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer")
+
 before "deploy:setup", "rvm:setup"
 after "deploy:symlink", "rvm:trust_rvmrc"
 
 namespace :rvm do
-  # install the requested ruby if missing
-  desc "Install the selected ruby version using RVM."
+  desc "Install RVM and Ruby"
   task :setup, :except => {:no_release => true} do
+    # install rvm
+    run("if ! test -d #{deploy_to}/.rvm; then " +
+        "curl -s #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
+        "chmod +x #{deploy_to}/rvm-installer; " +
+        "#{deploy_to}/rvm-installer --version #{rvm_version}; " +
+        "rm -f #{deploy_to}/rvm-installer; fi",
+        :shell => "/bin/bash")
+
+    # update rvm if version differs
+    run("source ~/.rvm/scripts/rvm && " +
+        "if ! rvm version | grep -q 'rvm #{rvm_version}'; then" +
+        "rvm get #{rvm_version}; fi",
+        :shell => "/bin/bash")
+
+    # install requested ruby version
     wo_gemset = rvm_ruby_string.gsub(/@.*/, '')
 
     run("echo silent > ~/.curlrc", :shell => "/bin/bash")
