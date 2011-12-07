@@ -170,7 +170,7 @@ namespace :deploy do
   DESC
   task :setup, :except => { :no_release => true } do
     shared = fetch(:internal_shared_children, []) | fetch(:shared_children, [])
-    dirs = [deploy_to, releases_path, shared_path]
+    dirs = [deploy_to, bin_path, releases_path, shared_path]
     dirs += shared.map { |d| File.join(shared_path, d) }
     run "mkdir -p #{dirs.join(' ')}"
   end
