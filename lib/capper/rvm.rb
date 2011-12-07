@@ -25,7 +25,7 @@ namespace :rvm do
 
     # update rvm if version differs
     run("source ~/.rvm/scripts/rvm && " +
-        "if ! rvm version | grep -q 'rvm #{rvm_version}'; then" +
+        "if ! rvm version | grep -q 'rvm #{rvm_version}'; then " +
         "rvm get #{rvm_version}; fi",
         :shell => "/bin/bash")
 
