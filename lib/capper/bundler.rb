@@ -16,7 +16,7 @@ set(:bundle_dir) do
 end
 
 # freeze bundler version
-_cset(:bundler_version, "1.0.17")
+_cset(:bundler_version, "1.0.21")
 
 before "bundle:install", "bundle:setup"
 
