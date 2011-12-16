@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.require_paths    = ["lib"]
 
   s.add_dependency "erubis"
-  s.add_dependency "capistrano"
-  s.add_dependency "capistrano_colors"
+  s.add_dependency "capistrano", "~> 2.9.0"
+  s.add_dependency "capistrano_colors", "~> 0.5.5"
 end
