@@ -148,15 +148,6 @@ The bundler recipe is an extension of bundlers native capistrano integration:
 - The option ``ruby_exec_prefix`` is set to ``bundle exec`` for convenience.
   (see ``ruby`` recipe for details)
 
-config
-------
-
-The config recipe adds support for a dedicated repository with configuration
-files. It is very preliminary right now and only supports git. The repository
-specified with ``config_repo`` will be cloned into ``shared/config`` and all
-files specified in the ``config_files`` array are copied to
-``#{release_path}/config``.
-
 delayed_job
 -----------
 
