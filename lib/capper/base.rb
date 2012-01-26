@@ -137,6 +137,20 @@ def run_locally(cmd)
   output_on_stdout
 end
 
+# confirm if a conditoin is true (e.g. after 6pm)
+def confirm_if(prompt="Continue? ")
+  if yield
+    yes = HighLine.new.agree(prompt) do |q|
+      q.overwrite = false
+      q.default = 'n'
+    end
+
+    unless yes
+      exit(-1)
+    end
+  end
+end
+
 # =========================================================================
 # These are the tasks that are available to help with deploying web apps,
 # and specifically, Rails applications. You can have cap give you a summary
