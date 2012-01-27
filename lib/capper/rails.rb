@@ -7,17 +7,12 @@ _cset(:asset_env, "RAILS_GROUPS=assets")
 
 set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(assets))
 
-set(:internal_symlinks) do
-  links = {
-    "log" => "log",
-    "pids" => "tmp/pids",
-    "system" => "public/system",
-  }
-
-  links.merge!({"assets" => "public/assets"}) if fetch(:asset_pipeline)
-
-  fetch(:internal_symlinks, {}).merge(links)
-end
+set(:internal_symlinks, fetch(:internal_symlinks, {}).merge({
+  "assets" => "public/assets",
+  "log" => "log",
+  "pids" => "tmp/pids",
+  "system" => "public/system",
+}))
 
 after 'deploy:update_code', 'rails:setup'
 after 'deploy:update_code', 'rails:assets:precompile'
