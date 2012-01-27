@@ -8,7 +8,6 @@ _cset(:asset_env, "RAILS_GROUPS=assets")
 set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(assets))
 
 set(:internal_symlinks, fetch(:internal_symlinks, {}).merge({
-  "assets" => "public/assets",
   "log" => "log",
   "pids" => "tmp/pids",
   "system" => "public/system",
@@ -68,6 +67,9 @@ namespace :rails do
     DESC
     task :precompile, :roles => [:web, :asset], :except => { :no_release => true } do
       if asset_pipeline
+        run("rm -rf #{latest_release}/public/assets && " +
+            "mkdir -p #{File.dirname(File.join(latest_release, "public/assets"))} && " +
+            "ln -s #{shared_path}/assets #{latest_release}/public/assets")
         run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:precompile"
       end
     end
