@@ -4,7 +4,7 @@ $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 require 'rvm/capistrano'
 
 set(:rvm_type, :user)
-set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm use --create (.*)/, '\1').strip)
+set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm( use)? --create (.*)/, '\2').strip)
 
 _cset(:rvm_version, "1.9.2")
 _cset(:rvm_installer_url, "https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer")
