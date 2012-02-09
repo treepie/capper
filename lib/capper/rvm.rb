@@ -15,6 +15,15 @@ after "deploy:symlink", "rvm:trust_rvmrc"
 namespace :rvm do
   desc "Install RVM and Ruby"
   task :setup, :except => {:no_release => true} do
+    # setup rvmrc
+    rvmrc = <<-EOS
+export rvm_path="#{deploy_to}/.rvm"
+export rvm_verbose_flag=0
+export rvm_gem_options="--no-rdoc --no-ri"
+    EOS
+
+    put(rvmrc, "#{deploy_to}/.rvmrc")
+
     # install rvm
     run("if ! test -d #{deploy_to}/.rvm; then " +
         "curl -s #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
