@@ -6,7 +6,7 @@ require 'rvm/capistrano'
 set(:rvm_type, :user)
 set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm( use)? --create (.*)/, '\2').strip)
 
-_cset(:rvm_version, "1.9.2")
+_cset(:rvm_version, "1.10.3")
 _cset(:rvm_installer_url, "https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer")
 
 before "deploy:setup", "rvm:setup"
