@@ -24,19 +24,24 @@ export rvm_gem_options="--no-rdoc --no-ri"
 
     put(rvmrc, "#{deploy_to}/.rvmrc")
 
+    # download rvm installer
+    run("curl -s #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
+        "chmod +x #{deploy_to}/rvm-installer",
+        :shell => "/bin/bash")
+
     # install rvm
     run("if ! test -d #{deploy_to}/.rvm; then " +
-        "curl -s #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
-        "chmod +x #{deploy_to}/rvm-installer; " +
-        "#{deploy_to}/rvm-installer --branch #{rvm_version}; " +
-        "rm -f #{deploy_to}/rvm-installer; fi",
+        "#{deploy_to}/rvm-installer --branch #{rvm_version}; fi",
         :shell => "/bin/bash")
 
     # update rvm if version differs
     run("source ~/.rvm/scripts/rvm && " +
         "if ! rvm version | grep -q 'rvm #{rvm_version}'; then " +
-        "rvm get branch #{rvm_version}; fi",
+        "#{deploy_to}/rvm-installer --branch #{rvm_version}; fi",
         :shell => "/bin/bash")
+
+    # remove rvm installer
+    run("rm -f #{deploy_to}/rvm-installer")
 
     # install requested ruby version
     wo_gemset = rvm_ruby_string.gsub(/@.*/, '')
