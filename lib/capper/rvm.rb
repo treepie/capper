@@ -41,7 +41,8 @@ export rvm_gem_options="--no-rdoc --no-ri"
         :shell => "/bin/bash")
 
     # remove rvm installer
-    run("rm -f #{deploy_to}/rvm-installer")
+    run("rm -f #{deploy_to}/rvm-installer",
+        :shell => "/bin/bash")
 
     # install requested ruby version
     wo_gemset = rvm_ruby_string.gsub(/@.*/, '')
