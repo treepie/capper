@@ -28,7 +28,7 @@ export rvm_gem_options="--no-rdoc --no-ri"
     run("if ! test -d #{deploy_to}/.rvm; then " +
         "curl -s #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
         "chmod +x #{deploy_to}/rvm-installer; " +
-        "#{deploy_to}/rvm-installer --version #{rvm_version}; " +
+        "#{deploy_to}/rvm-installer --branch #{rvm_version}; " +
         "rm -f #{deploy_to}/rvm-installer; fi",
         :shell => "/bin/bash")
 
