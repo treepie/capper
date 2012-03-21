@@ -5,9 +5,10 @@ _cset(:rails_env, "production")
 _cset(:asset_pipeline, true)
 _cset(:asset_env, "RAILS_GROUPS=assets")
 
-set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(assets))
+set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(assets cache system))
 
 set(:internal_symlinks, fetch(:internal_symlinks, {}).merge({
+  "cache" => "tmp/cache",
   "log" => "log",
   "pids" => "tmp/pids",
   "system" => "public/system",
