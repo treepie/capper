@@ -1,6 +1,6 @@
 #!/bin/bash
 export HOME=<%= deploy_to %>
-export RAILS_ENV=<%= rails_env %>
+export RAILS_ENV=<%= rails_env rescue "production" %>
 
 if [[ -e "${HOME}"/.rvm/scripts/rvm ]]; then
   source "${HOME}"/.rvm/scripts/rvm
