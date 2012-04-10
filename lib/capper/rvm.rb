@@ -6,8 +6,8 @@ require 'rvm/capistrano'
 set(:rvm_type, :user)
 set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm( use)? --create (.*)/, '\2').strip)
 
-_cset(:rvm_version, "1.10.3")
-_cset(:rvm_installer_url, "https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer")
+_cset(:rvm_version, "1.11.7")
+_cset(:rvm_installer_url, "http://get.rvm.io")
 
 before "deploy:setup", "rvm:setup"
 after "deploy:symlink", "rvm:trust_rvmrc"
@@ -25,7 +25,7 @@ export rvm_gem_options="--no-rdoc --no-ri"
     put(rvmrc, "#{deploy_to}/.rvmrc")
 
     # download rvm installer
-    run("curl -s #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
+    run("curl -s -L #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
         "chmod +x #{deploy_to}/rvm-installer",
         :shell => "/bin/bash")
 
