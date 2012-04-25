@@ -440,10 +440,10 @@ namespace :deploy do
       reason = ENV['REASON']
       deadline = ENV['UNTIL']
 
-      template = File.read(File.join(File.dirname(__FILE__), "templates", "maintenance.rhtml"))
-      result = ERB.new(template).result(binding)
-
-      put result, "#{shared_path}/system/#{maintenance_basename}.html", :mode => 0644
+      upload_template_file("maintenance.html",
+                           "#{shared_path}/system/#{maintenance_basename}.html",
+                           :mode => 0644,
+                           :binding => binding)
     end
 
     desc <<-DESC

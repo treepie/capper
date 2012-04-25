@@ -25,6 +25,8 @@ module Capper
       end
 
       def upload_template(path, options={})
+        bnd = options.delete(:binding) || binding
+
         if task = current_task
           servers = find_servers_for_task(task, options)
         else
@@ -37,7 +39,7 @@ module Capper
 
         servers.each do |server|
           erb = Erubis::Eruby.new(yield server)
-          result = erb.result(binding())
+          result = erb.result(bnd)
           put(result, path, options.merge!(:hosts => server))
         end
       end
