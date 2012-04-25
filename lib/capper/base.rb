@@ -71,7 +71,7 @@ _cset(:current_revision)  { capture("cat #{current_path}/REVISION",     :except 
 _cset(:latest_revision)   { capture("cat #{current_release}/REVISION",  :except => { :no_release => true }).chomp }
 _cset(:previous_revision) { capture("cat #{previous_release}/REVISION", :except => { :no_release => true }).chomp if previous_release }
 
-set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(cache config log pids))
+set(:internal_shared_children, fetch(:internal_shared_children, []) | %w(cache config log pids system))
 
 # some tasks, like symlink, need to always point at the latest release, but
 # they can also (occassionally) be called standalone. In the standalone case,
