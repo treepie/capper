@@ -166,8 +166,8 @@ namespace :deploy do
   DESC
   task :default do
     update
-    cleanup
     restart
+    cleanup
   end
 
   desc <<-DESC
