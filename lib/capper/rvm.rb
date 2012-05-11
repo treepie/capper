@@ -64,6 +64,11 @@ export rvm_gem_options="--no-rdoc --no-ri"
     end
   end
 
+  desc "Clear the current gemset"
+  task :empty do
+    run "cd #{current_release} && rvm --force gemset empty"
+  end
+
   # prevents interactive rvm dialog
   task :trust_rvmrc, :except => {:no_release => true} do
     run "rvm rvmrc trust #{release_path} >/dev/null"
