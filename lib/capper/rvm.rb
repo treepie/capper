@@ -1,6 +1,5 @@
 load "capper/ruby"
 
-$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 require 'rvm/capistrano'
 
 set(:rvm_type, :user)
