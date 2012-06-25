@@ -10,8 +10,8 @@ namespace :monit do
     servers = find_servers
 
     upload_template(monitrc, :mode => "0644") do |server|
-      configs.keys.select do |name|
-        roles = configs[name][:options][:roles]
+      configs.select do |name, config|
+        roles = config[:options][:roles]
         if roles.nil?
           true
         else
@@ -19,8 +19,8 @@ namespace :monit do
             self.roles[r.to_sym].include?(server)
           end.any?
         end
-      end.map do |name|
-        "# #{name}\n#{configs[name][:body]}"
+      end.map do |name, config|
+        "# #{name}\n#{config[:body]}"
       end.join("\n\n")
     end
   end
