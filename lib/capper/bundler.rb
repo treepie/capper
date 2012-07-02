@@ -16,7 +16,7 @@ set(:bundle_dir) do
 end
 
 # freeze bundler version
-_cset(:bundler_version, "1.1.3")
+_cset(:bundler_version, "1.1.4")
 
 before "bundle:install", "bundle:setup"
 
@@ -27,5 +27,10 @@ namespace :bundle do
         "gem install bundler -v #{bundler_version}; " +
         "fi"
     run "mkdir -p #{bundle_dir}"
+  end
+
+  desc "Clear the current bundle"
+  task :clear do
+    run "rm -rf #{bundle_dir}"
   end
 end
