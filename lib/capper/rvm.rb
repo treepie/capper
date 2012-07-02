@@ -68,6 +68,27 @@ export rvm_gem_options="--no-rdoc --no-ri"
     run "cd #{current_release} && rvm --force gemset empty"
   end
 
+  desc "Reinstall the current ruby version"
+  task :reinstall do
+    # install requested ruby version
+    wo_gemset = rvm_ruby_string.gsub(/@.*/, '')
+
+    run("echo silent > ~/.curlrc", :shell => "/bin/bash")
+    run("source ~/.rvm/scripts/rvm && " +
+        "rvm reinstall #{wo_gemset} && " +
+        "rvm use --create #{rvm_ruby_string} >/dev/null",
+        :shell => "/bin/bash")
+    run("rm ~/.curlrc")
+
+    # this ensures that Gentoos declare -x RUBYOPT="-rauto_gem" is ignored.
+    run "touch ~/.rvm/rubies/#{wo_gemset}/lib/ruby/site_ruby/auto_gem.rb"
+
+    # if specified freeze rubygems version, otherwise don't touch it
+    if fetch(:rvm_rubygems_version, false)
+      run("rvm rubygems #{rvm_rubygems_version}")
+    end
+  end
+
   # prevents interactive rvm dialog
   task :trust_rvmrc, :except => {:no_release => true} do
     run "rvm rvmrc trust #{release_path} >/dev/null"

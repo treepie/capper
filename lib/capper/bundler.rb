@@ -28,9 +28,4 @@ namespace :bundle do
         "fi"
     run "mkdir -p #{bundle_dir}"
   end
-
-  desc "Clear the current bundle"
-  task :clear do
-    run "rm -rf #{bundle_dir}"
-  end
 end
