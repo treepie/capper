@@ -281,7 +281,7 @@ setting into account.
 node deployment
 --------
 read http://big-elephants.com/2012-07/deploying-node-with-capistrano/ about the 
-the use cases.
+the use case.
 
 nave
 --------
