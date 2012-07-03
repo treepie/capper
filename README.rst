@@ -278,10 +278,15 @@ integration. With one application per user account the whole crontab can be
 used for whenever. Additionally this recipe take the ``ruby_exec_prefix``
 setting into account.
 
+node deployment
+--------
+read http://big-elephants.com/2012-07/deploying-node-with-capistrano/ about the 
+the use cases.
+
 nave
 --------
 
-The nave recipe sets up nave Virtual Environments for Node.
+The nave recipe sets up nave Virtual Environments for Node::
 
   set :use_nabe, true
   set :nave_dir, '~/.nave'
@@ -293,7 +298,7 @@ npm
 The npm recipe runs npm install after deploy:update_code. When used with the nave 
 recipe npm install runs ``nave use <ver> npm install``.
 Not it is recommended to add npm-shrinkwrap.json into version control to manage npm
-dependencies.
+dependencies::
 
   set :npm_cmd, "npm"
 
@@ -301,7 +306,7 @@ forever
 --------
 
 The forever recipe starts your app as daemon in the background.
-When used with the nave recipe it runs ``nave use <ver> forever [action]``.
+When used with the nave recipe it runs ``nave use <ver> forever [action]``::
 
   set :forever_cmd, "forever" # e.g. "./node_modules/.bin/forever"
   set :node_env, "production" # the NODE_ENV environment variable used to start the script
