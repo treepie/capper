@@ -1,4 +1,5 @@
 _cset(:ruby_exec_prefix, "")
+_cset(:ruby) { "#{ruby_exec_prefix} ruby" }
 _cset(:rake) { "#{ruby_exec_prefix} rake" }
 
 before "deploy:setup", "gemrc:setup"

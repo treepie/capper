@@ -30,9 +30,6 @@ _cset(:deploy_via, :remote_cache)
 _cset(:deploy_to) { "/var/app/#{application}" }
 _cset(:revision)  { source.head }
 
-_cset(:ruby_exec_prefix, "")
-_cset(:rake) { "#{ruby_exec_prefix} rake" }
-
 _cset(:maintenance_basename, "maintenance")
 
 # =========================================================================

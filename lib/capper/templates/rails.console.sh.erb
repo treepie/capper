@@ -9,7 +9,7 @@ fi
 cd <%= current_path %> >/dev/null
 
 if [[ -e ./script/console ]]; then
-  exec <%= ruby_exec_prefix %> ruby ./script/console
+  exec <%= ruby %> ./script/console
 else
-  exec <%= ruby_exec_prefix %> ruby ./script/rails console
+  exec <%= ruby %> ./script/rails console
 fi
