@@ -200,7 +200,7 @@ namespace :deploy do
   task :update do
     transaction do
       update_code
-      symlink
+      create_symlink
     end
   end
 
@@ -238,6 +238,14 @@ namespace :deploy do
   end
 
   desc <<-DESC
+    Deprecated API. This has become deploy:create_symlink, please update your recipes
+  DESC
+  task :symlink, :except => { :no_release => true } do
+    Kernel.warn "[Deprecation Warning] This API has changed, please hook `deploy:create_symlink` instead of `deploy:symlink`."
+    create_symlink
+  end
+
+  desc <<-DESC
     Updates the symlink to the most recently deployed version. Capistrano works \
     by putting each new release of your application in its own directory. When \
     you deploy a new version, this task's job is to update the `current' symlink \
@@ -246,7 +254,7 @@ namespace :deploy do
     deploy, including `restart') or the 'update' task (which does everything \
     except `restart').
   DESC
-  task :symlink, :except => { :no_release => true } do
+  task :create_symlink, :except => { :no_release => true } do
     on_rollback do
       if previous_release
         run "rm -f #{current_path}; ln -s #{previous_release} #{current_path}; true"
@@ -300,7 +308,7 @@ namespace :deploy do
   task :migrations do
     update_code
     migrate
-    symlink
+    create_symlink
     restart
   end
 
@@ -422,11 +430,11 @@ namespace :deploy do
     DESC
     task :disable, :roles => :web, :except => { :no_release => true } do
       require 'erb'
-      on_rollback { run "rm #{shared_path}/system/#{maintenance_basename}.html" }
+      on_rollback { run "rm -f #{shared_path}/system/#{maintenance_basename}.html" }
 
       warn <<-EOHTACCESS
 
-        # Please add something like this to your site's htaccess to redirect users to the maintenance page.
+        # Please add something like this to your site's Apache htaccess to redirect users to the maintenance page.
         # More Info: http://www.shiftcommathree.com/articles/make-your-rails-maintenance-page-respond-with-a-503
 
         ErrorDocument 503 /system/#{maintenance_basename}.html
@@ -435,6 +443,21 @@ namespace :deploy do
         RewriteCond %{DOCUMENT_ROOT}/system/#{maintenance_basename}.html -f
         RewriteCond %{SCRIPT_FILENAME} !#{maintenance_basename}.html
         RewriteRule ^.*$  -  [redirect=503,last]
+
+        # Or if you are using Nginx add this to your server config:
+
+        root #{current_path}/public;
+        try_files $uri/index.html $uri.html $uri @application;
+
+        error_page 503 /system/maintenance.html;
+
+        location @application {
+            if (-f $document_root/system/maintenance.html) {
+                return 503;
+            }
+
+            proxy_pass ...;
+        }
       EOHTACCESS
 
       upload_template_file("maintenance.html",
@@ -449,7 +472,7 @@ namespace :deploy do
       web-accessible again.
     DESC
     task :enable, :roles => :web, :except => { :no_release => true } do
-      run "rm #{shared_path}/system/#{maintenance_basename}.html"
+      run "rm -f #{shared_path}/system/#{maintenance_basename}.html"
     end
   end
 end

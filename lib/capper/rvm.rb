@@ -14,7 +14,7 @@ before "rvm:install_rvm", "rvm:install_rvmrc"
 after "rvm:install_ruby", "rvm:auto_gem"
 after "rvm:install_ruby", "rvm:install_rubygems"
 
-after "deploy:symlink", "rvm:trust_rvmrc"
+after "deploy:create_symlink", "rvm:trust_rvmrc"
 
 namespace :rvm do
   desc "Install a global .rvmrc"

@@ -7,7 +7,7 @@ set(:whenever_update_flags) { "--update-crontab #{whenever_identifier} --set env
 set(:whenever_clear_flags) { "--clear-crontab #{whenever_identifier}" }
 
 after "deploy:update_code", "whenever:clear_crontab"
-after "deploy:symlink", "whenever:update_crontab"
+after "deploy:create_symlink", "whenever:update_crontab"
 after "deploy:rollback", "whenever:update_crontab"
 
 namespace :whenever do
