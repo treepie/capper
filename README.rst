@@ -19,6 +19,12 @@ Capper provides sane defaults and many recipes for technologies typically used
 with Ruby and Python deployments to make ``config/deploy.rb`` much more
 declarative and terse.
 
+Release Notes
+=============
+
+v1.0.0 (14/07/2012)
+  capper has been in production for about 1 year and its API is now considered stable.
+
 Usage
 =====
 
@@ -133,6 +139,18 @@ The above snippet will create symlinks from
 ``#{release_path}/public/uploads`` after ``deploy:update_code`` has run.
 
 
+airbrake
+--------
+
+The airbrake recipe is merely a copy of airbrakes native capistrano integration
+without after/before hooks, so airbrake notifications can be enabled on-demand
+in stage blocks::
+
+  stage :production do
+    ...
+    after "deploy", "airbrake:notify"
+  end
+
 bundler
 -------
 
@@ -170,18 +188,6 @@ django
 
 The django recipe provides setup and migrate tasks for Django.
 
-hoptoad
--------
-
-The hoptoad recipe is merely a copy of hoptoads native capistrano integration
-without after/before hooks, so hoptoad notifications can be enabled on-demand
-in stage blocks::
-
-  stage :production do
-    ...
-    after "deploy", "hoptoad:notify"
-  end
-
 monit
 -----
 
@@ -203,23 +209,6 @@ The rails recipe sets the default ``rails_env`` to production and includes
 tasks for deploying the asset pipeline for rails 3.1 applications. It also
 provdes a migrate task for Rails applications.
 
-resque
-------
-
-The resque recipe provides integration with Resque. A script to
-start/stop resque workers is uploaded to ``#{bin_path}/resque``. The
-script supports multiple instances with queue names.
-
-If monit integration has been enabled via ``capper/monit`` workers are
-automatically (re)started during deploy and can be specified via
-``resque_workers``::
-
-  set :resque_workers, {
-    :important => :important,
-    :worker1 => :default,
-    :worker2 => :default
-  }
-
 rvm
 ---
 
@@ -227,8 +216,8 @@ The rvm recipe is an extension to RVMs native capistrano integration. The
 recipe forces the ``rvm_type`` to ``:user`` and will automatically determine
 the ruby version and gemset via the projects ``.rvmrc``.
 
-A ``deploy:setup`` hook is provided to ensure the correct ruby and rubygems
-version is installed on all servers.
+A ``deploy:setup`` hook is provided to ensure the correct rvm, ruby and rubygems
+versions are installed on all servers.
 
 ruby
 ----
