@@ -1,5 +1,9 @@
 load "capper/ruby"
 
+# workaround broken capistrano detection in rvm
+require "capistrano"
+Kernel.const_set("Capistrano", Capistrano)
+
 require "rvm/capistrano"
 
 set(:rvm_type, :user)
