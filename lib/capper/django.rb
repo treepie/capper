@@ -5,7 +5,7 @@ after 'deploy:update_code', 'django:setup'
 before 'deploy:migrate', 'django:migrate'
 
 namespace :django do
-  desc "Generate rails configuration and helpers"
+  desc "Generate django configuration and helpers"
   task :setup, :roles => :app, :except => { :no_release => true } do
     upload_template_file("manage.py",
                          File.join(bin_path, "manage.py"),
