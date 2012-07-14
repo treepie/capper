@@ -1,20 +1,24 @@
 load "capper/ruby"
 
-require 'rvm/capistrano'
+require "rvm/capistrano"
 
 set(:rvm_type, :user)
 set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm( use)? --create (.*)/, '\2').strip)
 
-_cset(:rvm_version, "1.11.7")
-_cset(:rvm_installer_url, "http://get.rvm.io")
+_cset(:rvm_version, "1.14.5")
+set(:rvm_install_type) { rvm_version }
 
-before "deploy:setup", "rvm:setup"
+before "deploy:setup", "rvm:install_ruby"
+before "rvm:install_ruby", "rvm:install_rvm"
+before "rvm:install_rvm", "rvm:install_rvmrc"
+after "rvm:install_ruby", "rvm:auto_gem"
+after "rvm:install_ruby", "rvm:install_rubygems"
+
 after "deploy:symlink", "rvm:trust_rvmrc"
 
 namespace :rvm do
-  desc "Install RVM and Ruby"
-  task :setup, :except => {:no_release => true} do
-    # setup rvmrc
+  desc "Install a global .rvmrc"
+  task :install_rvmrc, :except => {:no_release => true} do
     rvmrc = <<-EOS
 export rvm_path="#{deploy_to}/.rvm"
 export rvm_verbose_flag=0
@@ -22,41 +26,16 @@ export rvm_gem_options="--no-rdoc --no-ri"
     EOS
 
     put(rvmrc, "#{deploy_to}/.rvmrc")
+  end
 
-    # download rvm installer
-    run("curl -s -L #{rvm_installer_url} > #{deploy_to}/rvm-installer; " +
-        "chmod +x #{deploy_to}/rvm-installer",
-        :shell => "/bin/bash")
-
-    # install rvm
-    run("if ! test -d #{deploy_to}/.rvm; then " +
-        "#{deploy_to}/rvm-installer --branch #{rvm_version}; fi",
-        :shell => "/bin/bash")
-
-    # update rvm if version differs
-    run("source ~/.rvm/scripts/rvm && " +
-        "if ! rvm version | grep -q 'rvm #{rvm_version}'; then " +
-        "#{deploy_to}/rvm-installer --branch #{rvm_version}; fi",
-        :shell => "/bin/bash")
-
-    # remove rvm installer
-    run("rm -f #{deploy_to}/rvm-installer",
-        :shell => "/bin/bash")
-
-    # install requested ruby version
-    wo_gemset = rvm_ruby_string.gsub(/@.*/, '')
-
-    run("echo silent > ~/.curlrc", :shell => "/bin/bash")
-    run("source ~/.rvm/scripts/rvm && " +
-        "if ! rvm list rubies | grep -q #{wo_gemset}; then " +
-        "rvm install #{wo_gemset}; fi && " +
-        "rvm use --create #{rvm_ruby_string} >/dev/null",
-        :shell => "/bin/bash")
-    run("rm ~/.curlrc")
-
-    # this ensures that Gentoos declare -x RUBYOPT="-rauto_gem" is ignored.
+  desc "Ensure that Gentoos declare -x RUBYOPT=\"-rauto_gem\" is ignored"
+  task :auto_gem do
+    wo_gemset = rvm_ruby_string.split('@').first
     run "touch ~/.rvm/rubies/#{wo_gemset}/lib/ruby/site_ruby/auto_gem.rb"
+  end
 
+  desc "Install the specified rubygems version"
+  task :install_rubygems do
     # if specified freeze rubygems version, otherwise don't touch it
     if fetch(:rvm_rubygems_version, false)
       run("rvm rubygems #{rvm_rubygems_version}")
@@ -70,23 +49,7 @@ export rvm_gem_options="--no-rdoc --no-ri"
 
   desc "Reinstall the current ruby version"
   task :reinstall do
-    # install requested ruby version
-    wo_gemset = rvm_ruby_string.gsub(/@.*/, '')
-
-    run("echo silent > ~/.curlrc", :shell => "/bin/bash")
-    run("source ~/.rvm/scripts/rvm && " +
-        "rvm reinstall #{wo_gemset} && " +
-        "rvm use --create #{rvm_ruby_string} >/dev/null",
-        :shell => "/bin/bash")
-    run("rm ~/.curlrc")
-
-    # this ensures that Gentoos declare -x RUBYOPT="-rauto_gem" is ignored.
-    run "touch ~/.rvm/rubies/#{wo_gemset}/lib/ruby/site_ruby/auto_gem.rb"
-
-    # if specified freeze rubygems version, otherwise don't touch it
-    if fetch(:rvm_rubygems_version, false)
-      run("rvm rubygems #{rvm_rubygems_version}")
-    end
+    set(:rvm_install_ruby, :reinstall)
   end
 
   # prevents interactive rvm dialog
