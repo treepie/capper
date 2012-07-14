@@ -285,5 +285,4 @@ Contributing to capper
 Copyright
 =========
 
-Copyright (c) 2011 Benedikt Böhm. See LICENSE for
-further details.
+Copyright (c) 2011-2012 Benedikt Böhm. See LICENSE for further details.
