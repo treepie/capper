@@ -26,7 +26,7 @@ pid "<%= unicorn_pidfile %>"
 begin
   require "syslogger"
   logger Syslogger.new("<%= application %>-unicorn", Syslog::LOG_PID, Syslog::LOG_LOCAL1)
-rescue
+rescue LoadError
 end
 
 # these do not seem to support syslog
