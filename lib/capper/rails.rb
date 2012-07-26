@@ -55,6 +55,14 @@ namespace :rails do
     run "cd #{directory} && #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:migrate"
   end
 
+  namespace :db do
+    desc "create the database running rake db:create"
+    task :create, :roles => :db, :only => { :primary => true } do
+      migrate_env    = fetch(:migrate_env, "")
+      run "cd #{current_path} && #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:create"
+    end
+  end
+
   namespace :assets do
     desc <<-DESC
       Run the asset precompilation rake task. You can specify the full path \
