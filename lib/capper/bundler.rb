@@ -10,7 +10,7 @@ set(:ruby_exec_prefix, "bundle exec")
 set(:bundle_dir) do
   begin
     File.join(shared_path, 'bundle', rvm_ruby_string)
-  rescue NoMethodError
+  rescue NoMethodError, NameError
     File.join(shared_path, 'bundle')
   end
 end
