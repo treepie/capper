@@ -10,11 +10,10 @@ include Capper::Utils::Multistage
 require 'capper/utils/monit'
 include Capper::Utils::Monit
 
-# XXX: remove capture from kernel in case activesupport has been loaded. sigh.
-module ::Kernel
-  begin
-    remove_method :capture
-  rescue NameError
+# see https://github.com/capistrano/capistrano/issues/168
+Capistrano::Configuration::Namespaces::Namespace.class_eval do
+  def capture(*args)
+    parent.capture *args
   end
 end
 
