@@ -1,0 +1,11 @@
+#!/bin/bash
+export HOME=<%= deploy_to %>
+export RAILS_ENV=<%= rails_env rescue "production" %>
+
+if [[ -e "${HOME}"/.rvm/scripts/rvm ]]; then
+  source "${HOME}"/.rvm/scripts/rvm
+fi
+
+cd <%= current_path %> >/dev/null
+
+exec <%= ruby_exec_prefix %> bluepill -c <%= shared_path %> "$@"
