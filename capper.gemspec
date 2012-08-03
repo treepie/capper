@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.require_paths    = ["lib"]
 
   s.add_dependency "erubis"
+  s.add_dependency "dedent"
   s.add_dependency "capistrano", "~> 2.12.0"
   s.add_dependency "capistrano_colors", "~> 0.5.5"
   s.add_dependency "rvm-capistrano", "~> 1.2.3"

@@ -10,6 +10,9 @@ include Capper::Utils::Multistage
 require 'capper/utils/monit'
 include Capper::Utils::Monit
 
+require 'capper/utils/bluepill'
+include Capper::Utils::Bluepill
+
 # see https://github.com/capistrano/capistrano/issues/168
 Capistrano::Configuration::Namespaces::Namespace.class_eval do
   def capture(*args)

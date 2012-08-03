@@ -7,9 +7,30 @@ before "deploy:restart", "bluepill:start"
 namespace :bluepill do
   desc "Setup bluepill config"
   task :setup do
-    upload_template_file("bluepill.rb",
-                         bluepill_config,
-                         :mode => "0644")
+    servers = find_servers
+    configs = fetch(:bluepill_configs, {})
+
+    config = configs.select do |name, config|
+      roles = config[:options][:roles]
+      if roles.nil?
+        true
+      else
+        [roles].flatten.select do |r|
+          self.roles[r.to_sym].include?(server)
+        end.any?
+      end
+    end.map do |name, config|
+      "# #{name}\n#{config[:body]}"
+    end.join("\n\n")
+
+    upload_template(bluepill_config, :mode => "0644") do |server|
+      <<-EOS.dedent
+        Bluepill.application("#{application}", :base_dir => "#{shared_path}") do |app|
+          #{config}
+        end
+      EOS
+    end
+
     upload_template_file("bluepill.sh",
                          bluepill_script,
                          :mode => "0755")

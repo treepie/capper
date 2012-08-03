@@ -10,11 +10,24 @@ set(:unicorn_pidfile) { File.join(pid_path, "unicorn.pid") }
 after "deploy:update_code", "unicorn:setup"
 after "deploy:restart", "unicorn:restart"
 
-monit_config "unicorn", <<EOF, :roles => :app
-check process unicorn
-with pidfile "<%= unicorn_pidfile %>"
-start program = "<%= unicorn_script %> start" with timeout 60 seconds
-stop program = "<%= unicorn_script %> stop"
+monit_config "unicorn", <<EOF.dedent, :roles => :app
+  check process unicorn
+  with pidfile "<%= unicorn_pidfile %>"
+  start program = "<%= unicorn_script %> start" with timeout 60 seconds
+  stop program = "<%= unicorn_script %> stop"
+EOF
+
+bluepill_config "unicorn", <<EOF, :roles => :app
+  app.process("unicorn") do |process|
+    process.pid_file = "<%= unicorn_pidfile %>"
+    process.working_dir = "<%= current_path %>"
+
+    process.start_command = "<%= unicorn_script %> start"
+    process.start_grace_time = 60.seconds
+
+    process.stop_signals = [:quit, 30.seconds, :term, 5.seconds, :kill]
+    process.stop_grace_time = 45.seconds
+  end
 EOF
 
 namespace :unicorn do
