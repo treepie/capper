@@ -1,3 +1,5 @@
+require "dedent"
+
 require "capper/version"
 
 # mixin various helpers
