@@ -26,7 +26,7 @@ bluepill_config "unicorn", <<EOF, :roles => :app
     process.start_grace_time = 60.seconds
 
     process.stop_signals = [:quit, 5.seconds, :quit, 30.seconds, :term, 5.seconds, :kill]
-    process.stop_grace_time = 40.seconds
+    process.stop_grace_time = 45.seconds
   end
 EOF
 
