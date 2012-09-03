@@ -225,6 +225,12 @@ ruby
 The ruby recipe provides basic support for Ruby applications. It will setup a
 gemrc file and and variables for ``ruby_exec_prefix`` (such as bundler).
 
+thin
+----
+
+The thin recipe provides integration with Thin. A script to manage the
+thin process is uploaded to ``#{bin_path}/thin``.
+
 unicorn
 -------
 

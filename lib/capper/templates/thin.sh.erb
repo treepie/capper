@@ -1,0 +1,36 @@
+#!/bin/bash
+export HOME=<%= deploy_to %>
+export RAILS_ENV=<%= rails_env rescue "production" %>
+
+if [[ -e "${HOME}"/.rvm/scripts/rvm ]]; then
+  source "${HOME}"/.rvm/scripts/rvm
+fi
+
+PIDFILE=<%= thin_pidfile %>
+CONFIG=<%= thin_config %>
+CMD="<%= ruby_exec_prefix %> thin -S <%= pid_path %>/unicorn.sock -e $RAILS_ENV -d -R config.ru"
+
+cd <%= current_path %> >/dev/null
+
+sig () {
+  test -s "$PIDFILE" && kill -$1 $(<$PIDFILE)
+}
+
+case $1 in
+start)
+  sig 0 && echo >&2 "Already running" && exit 0
+  $CMD
+  ;;
+stop)
+  sig QUIT && exit 0
+  echo >&2 "Not running"
+  ;;
+kill)
+  sig TERM && exit 0
+  echo >&2 "Not running"
+  ;;
+*)
+  echo >&2 "Usage: $0 <start|stop|kill>"
+  exit 1
+  ;;
+esac
