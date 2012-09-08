@@ -27,6 +27,6 @@ namespace :nave do
   DESC
 
   task :install do
-    run("#{bin_path}/nave install #{fetch(:node_version, 'stable')}"
+    run("#{bin_path}/nave install #{fetch(:node_version, 'stable')}")
   end
 end
