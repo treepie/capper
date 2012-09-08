@@ -16,13 +16,8 @@ namespace :npm do
       set :npm_cmd,      "npm" # e.g. "/usr/local/bin/npm"
   DESC
   task :install, :roles => :app, :except => { :no_release => true } do
-    npm_cmd     = fetch(:npm_cmd, "npm")
-    app_path    = fetch(:latest_release)
-    if app_path.to_s.empty?
-      raise error_type.new("Cannot detect current release path - make sure you have deployed at least once.")
-    end
-    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir, "~/.nave")}/nave.sh use #{fetch(:node_ver, 'stable')}" :''
-    run "cd #{app_path} && #{prefix} #{npm_cmd} install"
+    prefix = fetch(:use_nave, false) ? "#{bin_path}/nave use #{fetch(:node_version, 'stable')}" : ''
+    run("cd #{latest_release} && #{prefix} #{fetch(:npm_cmd, "npm")} install")
   end
 end
 

@@ -15,21 +15,18 @@ namespace :nave do
 
   task :setup do
     nave_dir = fetch(:nave_dir, "~/.nave")
-    run("mkdir -p #{nave_dir}")
-    run("curl -s -L #{nave_installer_url} > #{nave_dir}/nave.sh; " +
-           "chmod +x #{nave_dir}/nave.sh",  :shell => "/bin/bash")
+    run("curl -s -L #{nave_installer_url} > #{bin_path}/nave; " +
+        "chmod +x #{bin_path}/nave",  :shell => "/bin/bash")
     install
   end
 
   desc <<-DESC
-    Installs the specified node version uses the latest stable as default \
+    Installs the specified node version. (default: stable) \
 
-    set :node_ver, "stable" # e.g. "0.8.1"
+    set :node_version, "stable" # e.g. "0.8.1"
   DESC
 
   task :install do
-    node_ver = fetch(:node_ver, 'stable')
-    node_install_cmd = fetch(:nave_dir, "~/.nave") + "/nave.sh install #{node_ver}"
-    run node_install_cmd
+    run("#{bin_path}/nave install #{fetch(:node_version, 'stable')}"
   end
 end
