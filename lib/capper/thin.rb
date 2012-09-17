@@ -2,6 +2,8 @@
 set(:thin_script) { File.join(bin_path, "thin") }
 set(:thin_pidfile) { File.join(pid_path, "thin.pid") }
 
+_cset(:thin_port, 3000)
+
 after "deploy:update_code", "thin:setup"
 after "deploy:restart", "thin:restart"
 
