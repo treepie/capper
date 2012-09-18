@@ -7,7 +7,7 @@ if [[ -e "${HOME}"/.rvm/scripts/rvm ]]; then
 fi
 
 PIDFILE=<%= thin_pidfile %>
-CMD="<%= ruby_exec_prefix %> thin -p <%= thin_port %> -e $RAILS_ENV -d -R config.ru"
+CMD="<%= ruby_exec_prefix %> thin -p <%= thin_port %> -e $RAILS_ENV -d -R config.ru start"
 
 cd <%= current_path %> >/dev/null
 
