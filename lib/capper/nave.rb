@@ -1,7 +1,9 @@
-before "deploy:setup", "nave:setup"
+after "deploy:setup", "nave:setup"
 
 _cset(:nave_installer_url, "https://raw.github.com/isaacs/nave/master/nave.sh")
 _cset(:use_nave, true)
+_cset(:nave_dir, "~/.nave")
+_cset(:node_version, "stable")
 
 namespace :nave do
 
@@ -14,9 +16,9 @@ namespace :nave do
   DESC
 
   task :setup do
-    nave_dir = fetch(:nave_dir, "~/.nave")
-    run("curl -s -L #{nave_installer_url} > #{bin_path}/nave; " +
-        "chmod +x #{bin_path}/nave",  :shell => "/bin/bash")
+    run("mkdir -p #{fetch(:nave_dir)}")
+    run("curl -s -L #{nave_installer_url} > #{fetch(:nave_dir)}/nave.sh; " +
+        "chmod +x #{fetch(:nave_dir)}/nave.sh",  :shell => "/bin/bash")
     install
   end
 
@@ -27,6 +29,6 @@ namespace :nave do
   DESC
 
   task :install do
-    run("#{bin_path}/nave install #{fetch(:node_version, 'stable')}")
+    run("#{fetch(:nave_dir)}/nave.sh install #{fetch(:node_version)}")
   end
 end

@@ -16,7 +16,7 @@ namespace :npm do
       set :npm_cmd,      "npm" # e.g. "/usr/local/bin/npm"
   DESC
   task :install, :roles => :app, :except => { :no_release => true } do
-    prefix = fetch(:use_nave, false) ? "#{bin_path}/nave use #{fetch(:node_version, 'stable')}" : ''
+    prefix = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" : ''
     run("cd #{latest_release} && #{prefix} #{fetch(:npm_cmd, "npm")} install")
   end
 end
