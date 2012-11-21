@@ -1,4 +1,6 @@
 after "deploy:restart", "forever:restart"
+after "deploy:start", "forever:start"
+after "deploy:stop", "forever:stop"
 
 namespace :forever do
   desc <<-DESC
