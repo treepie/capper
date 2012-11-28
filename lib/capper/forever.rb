@@ -21,7 +21,7 @@ namespace :forever do
     if app_path.to_s.empty?
       raise error_type.new("Cannot detect current release path - make sure you have deployed at least once.")
     end
-    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir, "~/.nave")}/nave.sh use #{fetch(:node_ver, 'stable')}" :''
+    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" :''
     run "cd #{app_path} && NODE_ENV=#{node_env} #{prefix} #{forever_cmd} start #{main_js}"
   end
 
@@ -45,7 +45,7 @@ namespace :forever do
     if app_path.to_s.empty?
       raise error_type.new("Cannot detect current release path - make sure you have deployed at least once.")
     end
-    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir, "~/.nave")}/nave.sh use #{fetch(:node_ver, 'stable')}" :''
+    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" :''
     run "cd #{app_path} && NODE_ENV=#{node_env} #{prefix} #{forever_cmd} stop #{main_js}"
   end
   desc <<-DESC
@@ -85,7 +85,7 @@ namespace :forever do
     if app_path.to_s.empty?
       raise error_type.new("Cannot detect current release path - make sure you have deployed at least once.")
     end
-    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir, "~/.nave")}/nave.sh use #{fetch(:node_ver, 'stable')}" :''
+    prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" :''
     resp = capture "cd #{app_path} && #{prefix} #{forever_cmd} logs | grep #{main_js}"
     #logs = resp.split("\n")[2..-1].map{|l| l.split(" " ).last.gsub(/.\[3[5,9]m/,'')}
     logs = resp.split("\n").map{|l| l.split(" " ).last.gsub(/.\[3[5,9]m/,'')}

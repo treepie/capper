@@ -275,7 +275,7 @@ setting into account.
 
 node deployment
 --------
-read http://big-elephants.com/2012-07/deploying-node-with-capistrano/ about the 
+read http://big-elephants.com/2012-07/deploying-node-with-capistrano/ about the
 the use case.
 
 nave
@@ -283,14 +283,14 @@ nave
 
 The nave recipe sets up nave Virtual Environments for Node::
 
-  set :use_nabe, true
+  set :use_nave, true
   set :nave_dir, '~/.nave'
-  set :node_ver, '0.8.1'
+  set :node_version, '0.8.1'
 
 npm
 --------
 
-The npm recipe runs npm install after deploy:update_code. When used with the nave 
+The npm recipe runs npm install after deploy:update_code. When used with the nave
 recipe npm install runs ``nave use <ver> npm install``.
 Not it is recommended to add npm-shrinkwrap.json into version control to manage npm
 dependencies::
