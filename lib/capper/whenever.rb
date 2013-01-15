@@ -12,7 +12,7 @@ after "deploy:rollback", "whenever:update_crontab"
 
 namespace :whenever do
   desc "Update application's crontab entries"
-  task :update_crontab, :roles => :cron do
+  task :update_crontab, :roles => :cron, :on_no_matching_servers => :continue do
     on_rollback do
       if previous_release
         run "cd #{previous_release} && #{whenever_command} #{whenever_update_flags}"
@@ -25,7 +25,7 @@ namespace :whenever do
   end
 
   desc "Remove all entries from application's crontab"
-  task :clear_crontab, :roles => :cron do
+  task :clear_crontab, :roles => :cron, :on_no_matching_servers => :continue do
     run "crontab /dev/null"
   end
 end
