@@ -272,6 +272,9 @@ The whenever recipe is a simplified version of whenevers native capistrano
 integration. With one application per user account the whole crontab can be
 used for whenever. Additionally this recipe take the ``ruby_exec_prefix``
 setting into account.
+To define the target servers user the cron role.
+
+    server "app1.example.com", :app, :cron
 
 node deployment
 --------
