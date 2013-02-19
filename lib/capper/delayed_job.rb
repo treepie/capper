@@ -54,6 +54,6 @@ namespace :delayed_job do
   task :restart, :roles => :worker, :except => { :no_release => true } do
     if fetch(:monitrc, false)
       run "monit -g delayed_job restart all"
-    fi
+    end
   end
 end
