@@ -1,0 +1,11 @@
+[Unit]
+Description=Thin Server
+
+[Service]
+Type=forking
+PIDFile=<%= thin_pidfile %>
+ExecStart=<%= thin_script %> start
+ExecStop=/bin/kill -QUIT $MAINPID
+
+[Install]
+WantedBy=default.target

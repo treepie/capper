@@ -1,0 +1,12 @@
+[Unit]
+Description=UWSGi Server
+
+[Service]
+Type=forking
+PIDFile=<%= uwsgi_pidfile %>
+ExecStart=<%= uwsgi_script %> start
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill -QUIT $MAINPID
+
+[Install]
+WantedBy=default.target

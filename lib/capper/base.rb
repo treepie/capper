@@ -59,6 +59,7 @@ _cset(:bin_path)          { File.join(deploy_to, "bin") }
 _cset(:pid_path)          { File.join(shared_path, "pids") }
 _cset(:log_path)          { File.join(shared_path, "log") }
 _cset(:config_path)       { File.join(shared_path, "config") }
+_cset(:units_path)        { File.join(deploy_to, ".config/systemd/user") }
 
 _cset(:releases)          { capture("ls -x #{releases_path}", :except => { :no_release => true }).split.sort }
 _cset(:current_release)   { releases.length > 0 ? File.join(releases_path, releases.last) : nil }

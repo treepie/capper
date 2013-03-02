@@ -9,11 +9,8 @@ include Capper::Utils::Templates
 require 'capper/utils/multistage'
 include Capper::Utils::Multistage
 
-require 'capper/utils/monit'
-include Capper::Utils::Monit
-
-require 'capper/utils/bluepill'
-include Capper::Utils::Bluepill
+require 'capper/utils/systemd'
+include Capper::Utils::Systemd
 
 # see https://github.com/capistrano/capistrano/issues/168
 Capistrano::Configuration::Namespaces::Namespace.class_eval do

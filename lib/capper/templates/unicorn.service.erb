@@ -1,0 +1,12 @@
+[Unit]
+Description=Unicorn Server
+
+[Service]
+Type=forking
+PIDFile=<%= unicorn_pidfile %>
+ExecStart=<%= unicorn_script %> start
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill -QUIT $MAINPID
+
+[Install]
+WantedBy=default.target
