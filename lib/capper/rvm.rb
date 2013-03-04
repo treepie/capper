@@ -9,7 +9,7 @@ require "rvm/capistrano"
 set(:rvm_type, :user)
 set(:rvm_ruby_string, File.read(".rvmrc").gsub(/^rvm( use)? --create (.*)/, '\2').strip)
 
-_cset(:rvm_version, "1.17.0")
+_cset(:rvm_version, "1.18.2")
 set(:rvm_install_type) { rvm_version }
 
 before "deploy:setup", "rvm:install_ruby"
