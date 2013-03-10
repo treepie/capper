@@ -82,24 +82,12 @@ The above command will upload ``config/deploy/templates/myscript.sh.erb`` to
 the specified path. Inside the template all capistrano options (current_path,
 application, etc) are available.
 
-Monit integration
+systemd integration
 -----------------
 
-Capper provides DSL syntax for monit integration. Many recipes shipped with
-capper already contain monit configuration. These configuration snippets are
-not enabled unless you include the monit recipe in your ``Capfile``.
-
-Custom monit configuration snippets can be created with ``monit_config``::
-
-  monit_config "myprocess", <<EOF, :roles => :app
-  check process myprocess
-  with pidfile ...
-  start program = ...
-  stop program = ...
-  EOF
-
-The above call will create the specified monit snippet for monit instances
-running on servers in the ``:app`` role.
+Capper provides integration with a systemd user session running for the user
+that is being deployed to. Capper will upload service units and enable/start
+these accordingly.
 
 Recipes
 =======
@@ -187,13 +175,6 @@ django
 ------
 
 The django recipe provides setup and migrate tasks for Django.
-
-monit
------
-
-The monit recipe will collect all snippets declared via ``monit_config`` and
-render them into the file specified via ``monitrc`` (default:
-``~/.monitrc.local``, this file should be included in your ``~/.monitrc``).
 
 python
 ------
