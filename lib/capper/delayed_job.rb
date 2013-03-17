@@ -3,10 +3,10 @@ _cset(:delayed_job_workers, {})
 
 # these cannot be overriden
 set(:delayed_job_script) { File.join(bin_path, "delayed_job") }
-set(:delayed_job_service) { File.join(units_path, "delayed_job.service") }
+set(:delayed_job_service) { File.join(units_path, "delayed_job@.service") }
 
 after "deploy:update_code", "delayed_job:setup"
-after "deploy:restart", "delayed_job:upgrade"
+after "deploy:restart", "delayed_job:restart"
 after "deploy:start", "delayed_job:start"
 after "deploy:stop", "delayed_job:stop"
 
@@ -20,28 +20,28 @@ namespace :delayed_job do
                          delayed_job_service,
                          :mode => "0755")
     systemctl "daemon-reload"
-    delayed_job_worker.each do |name|
+    delayed_job_workers.each do |name|
       systemctl :enable, "delayed_job@#{name}"
     end
   end
 
   desc "Start delayed job workers"
   task :start, :roles => :app, :except => { :no_release => true } do
-    delayed_job_worker.each do |name|
+    delayed_job_workers.each do |name|
       systemctl :start, "delayed_job@#{name}"
     end
   end
 
   desc "Stop delayed job workers"
   task :stop, :roles => :app, :except => { :no_release => true } do
-    delayed_job_worker.each do |name|
+    delayed_job_workers.each do |name|
       systemctl :stop, "delayed_job@#{name}"
     end
   end
 
   desc "Restart delayed job workers"
   task :restart, :roles => :app, :except => { :no_release => true } do
-    delayed_job_worker.each do |name|
+    delayed_job_workers.each do |name|
       systemctl :restart, "delayed_job@#{name}"
     end
   end
