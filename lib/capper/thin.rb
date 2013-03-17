@@ -1,6 +1,6 @@
 # these cannot be overriden
 set(:thin_script) { File.join(bin_path, "thin") }
-set(:thin_service) { File.join(bin_path, "thin.service") }
+set(:thin_service) { File.join(units_path, "thin.service") }
 set(:thin_pidfile) { File.join(pid_path, "thin.pid") }
 
 _cset(:thin_port, 3000)
