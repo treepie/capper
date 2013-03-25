@@ -6,6 +6,7 @@ Type=forking
 PIDFile=<%= thin_pidfile %>
 ExecStart=<%= thin_script %> start
 ExecStop=/bin/kill -QUIT $MAINPID
+Restart=always
 
 [Install]
 WantedBy=default.target

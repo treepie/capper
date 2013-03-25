@@ -6,6 +6,7 @@ Type=forking
 PIDFile=<%= pid_path %>/delayed_job.%I.pid
 ExecStart=<%= delayed_job_script %> start %I
 ExecStop=<%= delayed_job_script %> stop %I
+Restart=always
 
 [Install]
 WantedBy=default.target

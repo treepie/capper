@@ -23,7 +23,7 @@ namespace :uwsgi do
                          :mode => "0755")
     upload_template_file("uwsgi.service",
                          uwsgi_service,
-                         :mode => "0755")
+                         :mode => "0644")
     systemctl "daemon-reload"
     systemctl :enable, :uwsgi
   end

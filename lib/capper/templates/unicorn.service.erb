@@ -7,6 +7,7 @@ PIDFile=<%= unicorn_pidfile %>
 ExecStart=<%= unicorn_script %> start
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -QUIT $MAINPID
+Restart=always
 
 [Install]
 WantedBy=default.target
