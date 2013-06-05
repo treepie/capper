@@ -1,7 +1,5 @@
 require "dedent"
 
-require "capper/version"
-
 # mixin various helpers
 require 'capper/utils/templates'
 include Capper::Utils::Templates
@@ -15,7 +13,7 @@ include Capper::Utils::Systemd
 # see https://github.com/capistrano/capistrano/issues/168
 Capistrano::Configuration::Namespaces::Namespace.class_eval do
   def capture(*args)
-    parent.capture *args
+    parent.capture(*args)
   end
 end
 

@@ -1,10 +1,8 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "capper/version"
 
 Gem::Specification.new do |s|
   s.name = "capper"
-  s.version = Capper::VERSION
+  s.version = "2.0.0.rc4"
   s.authors = ["Benedikt Böhm"]
   s.email = ["bb@xnull.de"]
   s.homepage = "http://github.com/zenops/capper"
