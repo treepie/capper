@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "capper"
-  s.version = "2.0.0.rc4"
+  s.version = "2.0.0"
   s.authors = ["Benedikt Böhm"]
   s.email = ["bb@xnull.de"]
   s.homepage = "http://github.com/zenops/capper"
