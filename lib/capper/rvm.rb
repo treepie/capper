@@ -8,7 +8,7 @@ set(:rvm_ruby_string, :local)
 
 require "rvm/capistrano"
 
-before "deploy", "rvm:install_ruby"
+before "deploy:setup", "rvm:install_ruby"
 before "rvm:install_ruby", "rvm:install_rvm"
 before "rvm:install_rvm", "rvm:install_rvmrc"
 after "rvm:install_ruby", "rvm:auto_gem"
