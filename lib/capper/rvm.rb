@@ -27,7 +27,7 @@ export rvm_gem_options="--no-rdoc --no-ri"
 
   desc "Ensure that Gentoos declare -x RUBYOPT=\"-rauto_gem\" is ignored"
   task :auto_gem do
-    wo_gemset = rvm_ruby_string.split('@').first
+    wo_gemset = fetch(:rvm_ruby_string_evaluated).to_s.split('@').first
     run "touch ~/.rvm/rubies/#{wo_gemset}/lib/ruby/site_ruby/auto_gem.rb"
   end
 
