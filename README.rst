@@ -195,7 +195,8 @@ rvm
 
 The rvm recipe is an extension to RVMs native capistrano integration. The
 recipe forces the ``rvm_type`` to ``:user`` and will automatically determine
-the ruby version and gemset via the projects ``.rvmrc``.
+the ruby version and gemset via the projects ``.ruby-version`` and
+``.ruby-gemset`` files.
 
 A ``deploy:setup`` hook is provided to ensure the correct rvm, ruby and rubygems
 versions are installed on all servers.
