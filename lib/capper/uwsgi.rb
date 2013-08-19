@@ -3,31 +3,14 @@ _cset(:uwsgi_worker_processes, 4)
 
 # these cannot be overriden
 set(:uwsgi_script) { File.join(bin_path, "uwsgi") }
+set(:uwsgi_service) { File.join(units_path, "uwsgi.service") }
 set(:uwsgi_config) { File.join(config_path, "uwsgi.xml") }
 set(:uwsgi_pidfile) { File.join(pid_path, "uwsgi.pid") }
 
 after "deploy:update_code", "uwsgi:setup"
-after "deploy:restart", "uwsgi:restart"
-
-monit_config "uwsgi", <<EOF.dedent, :roles => :app
-  check process uwsgi
-  with pidfile "<%= uwsgi_pidfile %>"
-  start program = "<%= uwsgi_script %> start" with timeout 60 seconds
-  stop program = "<%= uwsgi_script %> stop"
-EOF
-
-bluepill_config "uwsgi", <<EOF, :roles => :app
-  app.process("uwsgi") do |process|
-    process.pid_file = "<%= uwsgi_pidfile %>"
-    process.working_dir = "<%= current_path %>"
-
-    process.start_command = "<%= uwsgi_script %> start"
-    process.start_grace_time = 60.seconds
-
-    process.stop_signals = [:quit, 5.seconds, :quit, 30.seconds, :term, 5.seconds, :kill]
-    process.stop_grace_time = 45.seconds
-  end
-EOF
+after "deploy:restart", "uwsgi:reload"
+after "deploy:start", "uwsgi:start"
+after "deploy:stop", "uwsgi:stop"
 
 namespace :uwsgi do
   desc "Generate uwsgi configuration files"
@@ -38,20 +21,30 @@ namespace :uwsgi do
     upload_template_file("uwsgi.sh",
                          uwsgi_script,
                          :mode => "0755")
+    upload_template_file("uwsgi.service",
+                         uwsgi_service,
+                         :mode => "0644")
+    systemctl "daemon-reload"
+    systemctl :enable, :uwsgi
   end
 
   desc "Start uwsgi"
   task :start, :roles => :app, :except => { :no_release => true } do
-    run "#{uwsgi_script} start"
+    systemctl :start, :uwsgi
   end
 
   desc "Stop uwsgi"
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "#{uwsgi_script} stop"
+    systemctl :stop, :uwsgi
   end
 
   desc "Reload uwsgi"
   task :restart, :roles => :app, :except => { :no_release => true } do
+    systemctl :restart, :uwsgi
+  end
+
+  desc "Reload uwsgi"
+  task :reload, :roles => :app, :except => { :no_release => true } do
     run "#{uwsgi_script} reload"
   end
 end

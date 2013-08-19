@@ -59,6 +59,7 @@ _cset(:bin_path)          { File.join(deploy_to, "bin") }
 _cset(:pid_path)          { File.join(shared_path, "pids") }
 _cset(:log_path)          { File.join(shared_path, "log") }
 _cset(:config_path)       { File.join(shared_path, "config") }
+_cset(:units_path)        { File.join(deploy_to, ".config/systemd/user") }
 
 _cset(:releases)          { capture("ls -x #{releases_path}", :except => { :no_release => true }).split.sort }
 _cset(:current_release)   { releases.length > 0 ? File.join(releases_path, releases.last) : nil }
@@ -117,6 +118,31 @@ def with_env(name, value)
   yield
 ensure
   ENV[name] = saved
+end
+
+# make sure a block and all commands within are only executed for servers
+# matching the specified role even if ROLES or HOSTS is specified on the
+# command line, in which case capistrano matches all servers by default. *sigh*
+def ensure_role(role, &block)
+  if task = current_task
+    servers = find_servers_for_task(task)
+  else
+    servers = find_servers
+  end
+
+  servers = servers.select do |server|
+    self.roles[role.to_sym].include?(server)
+  end
+
+  return if servers.empty?
+
+  original, ENV['HOSTS'] = ENV['HOSTS'], servers.map { |s| s.host }.join(',')
+
+  begin
+    yield
+  ensure
+    ENV['HOSTS'] = original
+  end
 end
 
 # logs the command then executes it locally.

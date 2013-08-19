@@ -4,31 +4,14 @@ _cset(:unicorn_timeout, 30)
 
 # these cannot be overriden
 set(:unicorn_script) { File.join(bin_path, "unicorn") }
+set(:unicorn_service) { File.join(units_path, "unicorn.service") }
 set(:unicorn_config) { File.join(config_path, "unicorn.rb") }
 set(:unicorn_pidfile) { File.join(pid_path, "unicorn.pid") }
 
 after "deploy:update_code", "unicorn:setup"
-after "deploy:restart", "unicorn:restart"
-
-monit_config "unicorn", <<EOF.dedent, :roles => :app
-  check process unicorn
-  with pidfile "<%= unicorn_pidfile %>"
-  start program = "<%= unicorn_script %> start" with timeout 60 seconds
-  stop program = "<%= unicorn_script %> stop"
-EOF
-
-bluepill_config "unicorn", <<EOF, :roles => :app
-  app.process("unicorn") do |process|
-    process.pid_file = "<%= unicorn_pidfile %>"
-    process.working_dir = "<%= current_path %>"
-
-    process.start_command = "<%= unicorn_script %> start"
-    process.start_grace_time = 60.seconds
-
-    process.stop_signals = [:quit, 5.seconds, :quit, 30.seconds, :term, 5.seconds, :kill]
-    process.stop_grace_time = 45.seconds
-  end
-EOF
+after "deploy:restart", "unicorn:upgrade"
+after "deploy:start", "unicorn:start"
+after "deploy:stop", "unicorn:stop"
 
 namespace :unicorn do
   desc "Generate unicorn configuration files"
@@ -39,20 +22,30 @@ namespace :unicorn do
     upload_template_file("unicorn.sh",
                          unicorn_script,
                          :mode => "0755")
+    upload_template_file("unicorn.service",
+                         unicorn_service,
+                         :mode => "0755")
+    systemctl "daemon-reload"
+    systemctl :enable, :unicorn
   end
 
   desc "Start unicorn"
   task :start, :roles => :app, :except => { :no_release => true } do
-    run "#{unicorn_script} start"
+    systemctl :start, :unicorn
   end
 
   desc "Stop unicorn"
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "#{unicorn_script} stop"
+    systemctl :stop, :unicorn
   end
 
-  desc "Restart unicorn with zero downtime"
+  desc "Restart unicorn"
   task :restart, :roles => :app, :except => { :no_release => true } do
+    systemctl :restart, :unicorn
+  end
+
+  desc "Upgrade unicorn with zero downtime"
+  task :upgrade, :roles => :app, :except => { :no_release => true } do
     run "#{unicorn_script} upgrade"
   end
 

@@ -23,8 +23,7 @@ stop)
   ;;
 reload)
   sig HUP && echo reloaded OK && exit 0
-  echo >&2 "Couldn't reload, starting '$CMD' instead"
-  $CMD
+  echo >&2 "Couldn't reload, process dead?"
   ;;
 *)
   echo >&2 "Usage: $0 <start|stop|reload>"

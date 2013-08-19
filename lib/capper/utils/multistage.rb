@@ -2,7 +2,12 @@ module Capper
   module Utils
     module Multistage
 
-      def stage(name, &block)
+      def stage(*args, &block)
+        if args.size == 0
+          return fetch(:current_stage, nil)
+        end
+
+        name = args.first
         stages = fetch(:stages, [])
 
         if stages.include?(name)

@@ -31,13 +31,11 @@ kill)
   ;;
 reload)
   sig HUP && echo reloaded OK && exit 0
-  echo >&2 "Couldn't reload, starting '$CMD' instead"
-  $CMD
+  echo >&2 "Couldn't reload, process dead?" && exit 1
   ;;
 upgrade)
   sig USR2 && exit 0
-  echo >&2 "Couldn't upgrade, starting '$CMD' instead"
-  $CMD
+  echo >&2 "Couldn't upgrade, process dead?" && exit 1
   ;;
 addworker)
   sig TTIN && echo added one worker to the pool OK && exit 0
