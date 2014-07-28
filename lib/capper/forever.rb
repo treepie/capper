@@ -48,11 +48,7 @@ namespace :forever do
       raise error_type.new("Cannot detect current release path - make sure you have deployed at least once.")
     end
     prefix  = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" :''
-    begin
-      run "cd #{app_path} && NODE_ENV=#{node_env} #{prefix} #{forever_cmd} stop #{main_js}"
-    rescue Exception => error
-      puts "Error stopping forever: #{error}"
-    end
+    run "cd #{app_path} && NODE_ENV=#{node_env} #{prefix} #{forever_cmd} stop #{main_js}"
   end
   desc <<-DESC
     Restart the servers using the forever cmd If the forever cmd cannot \

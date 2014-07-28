@@ -1,0 +1,19 @@
+after 'deploy:update_code', "grunt:build"
+
+namespace :grunt do
+  desc <<-DESC
+    Run the grunt build task. \
+    
+    If the grunt cmd cannot be found then you can override the grunt_cmd variable to specifiy \
+    which one it should use.
+
+    You can override any of these defaults by setting the variables shown below.
+
+      set :grunt_cmd,      "grunt" # e.g. "/usr/local/bin/grunt"
+  DESC
+  task :build, :roles => :app, :except => { :no_release => true } do
+    prefix = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" : ''
+    run("cd #{latest_release} && #{prefix} #{fetch(:grunt_cmd, "node ./node_modules/.bin/grunt")} build")
+  end
+end
+
