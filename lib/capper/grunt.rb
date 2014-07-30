@@ -12,8 +12,9 @@ namespace :grunt do
       set :grunt_cmd,      "grunt" # e.g. "/usr/local/bin/grunt"
   DESC
   task :build, :roles => :app, :except => { :no_release => true } do
+    node_env        = fetch(:node_env,'production')
     prefix = fetch(:use_nave, false) ? "#{fetch(:nave_dir)}/nave.sh use #{fetch(:node_version, 'stable')}" : ''
-    run("cd #{latest_release} && #{prefix} #{fetch(:grunt_cmd, "node ./node_modules/.bin/grunt")} build")
+    run("cd #{latest_release} && NODE_ENV=#{node_env} #{prefix} #{fetch(:grunt_cmd, "node ./node_modules/.bin/grunt")} build")
   end
 end
 
