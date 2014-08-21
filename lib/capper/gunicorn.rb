@@ -1,4 +1,5 @@
 after 'deploy:update_code', "gunicorn:reload"
+after 'deploy:setup', "gunicorn:setup"
 
 namespace :gunicorn do
   desc "Setup application in gunicorn"
