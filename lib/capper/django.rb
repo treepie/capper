@@ -1,6 +1,6 @@
 load "capper/python"
 
-after 'deploy:update_code', 'django:setup'
+after 'deploy:update_code', 'django:setup', 'django:local_settings'
 
 before 'deploy:migrate', 'django:migrate'
 
@@ -30,5 +30,16 @@ namespace :django do
       end
 
     run "cd #{directory} && #{python} manage.py syncdb --migrate --noinput"
+  end
+  
+  task "local_settings", :role => :web do
+    config_file = "config/deploy/local_settings.py.erb"
+    unless File.exists?(config_file)
+      config_file = File.join(File.dirname(__FILE__), "../../generators/capistrano/django/templates/_local_settings.py.erb")
+    end
+    config = ERB.new(File.read(config_file)).result(binding)
+    set :user, sudo_user
+    put config, "/tmp/#{application}"
+    run "#{sudo} mv /tmp/#{application} #{directory}"
   end
 end
