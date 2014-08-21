@@ -40,6 +40,6 @@ namespace :django do
     config = ERB.new(File.read(config_file)).result(binding)
     set :user, sudo_user
     put config, "/tmp/#{application}"
-    run "#{sudo} mv /tmp/#{application} #{directory}"
+    run "#{sudo} mv /tmp/#{application} #{deploy_to}/current/"
   end
 end
