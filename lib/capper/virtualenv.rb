@@ -16,6 +16,6 @@ end
 
 namespace :pip do
   task :install do
-    run("#{bin_path}/pip install -q -t #{deploy_to} -r #{latest_release}/requirements.txt")
+    run("#{bin_path}/pip install -q -r #{latest_release}/requirements.txt")
   end
 end
