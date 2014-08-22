@@ -1,5 +1,5 @@
-after "deploy:restart", "gunicorn:reload"
-after "deploy:start", "gunicorn:reload"
+after "deploy:restart", "gunicorn:restart"
+after "deploy:start", "gunicorn:restart"
 after 'deploy:setup', "gunicorn:setup"
 
 namespace :gunicorn do
@@ -15,9 +15,15 @@ namespace :gunicorn do
       run "#{sudo} mv /tmp/#{application} /etc/gunicorn.d/#{application}"
     end
 
-    desc "Reload nginx configuration"
+    desc "Reload gunicorn configuration"
     task :reload, :role => :web do
       set :user, sudo_user
       run "#{sudo} /etc/init.d/gunicorn reload"
+    end
+    
+    desc "Restart gunicorn"
+    task :reload, :role => :web do
+      set :user, sudo_user
+      run "#{sudo} /etc/init.d/gunicorn restart"
     end
 end
