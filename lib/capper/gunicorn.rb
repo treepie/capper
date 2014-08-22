@@ -1,4 +1,5 @@
-after 'deploy:update_code', "gunicorn:reload"
+after "deploy:restart", "gunicorn:reload"
+after "deploy:start", "gunicorn:reload"
 after 'deploy:setup', "gunicorn:setup"
 
 namespace :gunicorn do
