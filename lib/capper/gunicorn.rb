@@ -22,7 +22,7 @@ namespace :gunicorn do
     end
     
     desc "Restart gunicorn"
-    task :reload, :role => :web do
+    task :restart, :role => :web do
       set :user, sudo_user
       run "#{sudo} /etc/init.d/gunicorn restart"
     end
